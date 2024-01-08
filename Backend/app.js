@@ -47,7 +47,7 @@ app.use(convertToLowercase);
 //
 
 app.use("/api/role", roleRouter);
-// // check errors
+// check errors
 app.use((req, res, next) => {
   return next(createError(404, "Resource Not Found"));
 });

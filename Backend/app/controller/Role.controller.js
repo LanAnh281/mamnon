@@ -1,40 +1,84 @@
-const { role } = require("../models/index");
-const { ApiError } = require("../api-error");
+const { Roles } = require("../models/index");
+const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
+  const { name } = req.body;
+  console.log("Roles Body:", req.body);
   try {
-    console.log("Body", req.body);
-    const newRole = role({
-      name: req.body.name,
+    const document = await Roles.create({
+      name: name,
     });
-    const document = await newRole.save();
-    console.log("doc:", document);
-    return res.json({ data: document, status: "success" });
+    console.log(document);
+    return res.json({ message: document, status: "success" });
   } catch (error) {
-    return next(ApiError(500, "An error occurred while creating the role"));
+    console.log(error);
+    return next(new ApiError(500, 'An error occurred while creating the role'))
   }
 };
 exports.findAll = async (req, res, next) => {
   try {
-    const document = await role.find({});
-    console.log("doc:", document);
-    return res.json({ data: document, status: "success" });
+    const documents = await Roles.findAll({});
+    return res.json({ message: documents, status: "success" });
   } catch (error) {
-    return next(ApiError(500, "An error occurred while creating the role"));
+    console.log(error);
+    return next(new ApiError(500, 'An error occurred while finding all the role'))
   }
 };
-
-exports.find = async (req, res, next) => {
+exports.findOne = async (req, res, next) => {
   try {
-    const document = await role.findOne({ _id: req.params._id });
-    console.log("doc:", document);
-    return res.json({ data: document, status: "success" });
+    console.log(req.params.id);
+    const document = await Roles.findOne({
+      where: {
+        _id: req.params.id,
+      },
+    });
+    return res.json({ message: document, status: "success" });
   } catch (error) {
-    return next(ApiError(500, "An error occurred while creating the role"));
+    console.log(error);
+    return next(new ApiError(500, 'An error occurred while finding  the role'))
+  }
+};
+exports.updated = async (req, res, next) => {
+  const { name } = req.body;
+  console.log("Update Roles", req.body);
+  try {
+    const document = await Roles.update(
+      {
+        name: name,
+      },
+      {
+        where: {
+          _id: req.params.id,
+        },
+      }
+    );
+    return res.json({ message: document, status: "success" });
+  } catch (error) {
+    console.log(error);
+    return next(new ApiError(500, 'An error occurred while updating the role'))
+  }
+};
+exports.delete = async (req, res, next) => {
+  try {
+    const document = await Roles.destroy({
+      where: {
+        _id: req.params.id,
+      },
+    });
+    return res.json({ message: document, status: "success" });
+  } catch (error) {
+    console.log(error);
+    return next(new ApiError(500, 'An error occurred while deleting the role'))
   }
 };
 exports.deleteAll = async (req, res, next) => {
   try {
+    const documents = await Roles.destroy({
+      //  where: {}
+    });
+    return res.json({ message: documents, status: "success" });
   } catch (error) {
-    return next(ApiError(500, "An error occurred while creating the role"));
+    console.log(error);
+
+    return next(new ApiError(500, 'An error occurred while deleting all the role'))
   }
 };
