@@ -1,11 +1,18 @@
-const { Permissions } = require("../models/index");
+const { School } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
-    const { name } = req.body;
-    console.log("Permissions Body:", req.body);
+    const { name, address, phone, TaxId, clientId, secretId, email } = req.body;
+    console.log("School Body:", req.body);
     try {
-        const document = await Permissions.create({
+        const document = await School.create({
             name: name,
+            address: address,
+            phone: phone,
+            TaxId: TaxId,
+            clientId: clientId,
+            secretId: secretId,
+            email: email
+
         });
         console.log(document);
         return res.json({ message: document, status: "success" });
@@ -16,7 +23,7 @@ exports.create = async (req, res, next) => {
 };
 exports.findAll = async (req, res, next) => {
     try {
-        const documents = await Permissions.findAll({});
+        const documents = await School.findAll({});
         return res.json({ message: documents, status: "success" });
     } catch (error) {
         console.log(error);
@@ -26,7 +33,7 @@ exports.findAll = async (req, res, next) => {
 exports.findOne = async (req, res, next) => {
     try {
         console.log(req.params.id);
-        const document = await Permissions.findOne({
+        const document = await School.findOne({
             where: {
                 _id: req.params.id,
             },
@@ -38,12 +45,18 @@ exports.findOne = async (req, res, next) => {
     }
 };
 exports.updated = async (req, res, next) => {
-    const { name } = req.body;
-    console.log("Update Permissions", req.body);
+    const { name, address, phone, TaxId, clientId, secretId, email } = req.body; console.log("Update School", req.body);
     try {
-        const document = await Permissions.update(
+        const document = await School.update(
             {
                 name: name,
+                address: address,
+                phone: phone,
+                TaxId: TaxId,
+                clientId: clientId,
+                secretId: secretId,
+                email: email
+
             },
             {
                 where: {
@@ -57,26 +70,4 @@ exports.updated = async (req, res, next) => {
         return next(new ApiError(500, 'An error occurred while updating the role'))
     }
 };
-exports.delete = async (req, res, next) => {
-    try {
-        const document = await Permissions.destroy({
-            where: {
-                _id: req.params.id,
-            },
-        });
-        return res.json({ message: document, status: "success" });
-    } catch (error) {
-        console.log(error);
-        return next(new ApiError(500, 'An error occurred while deleting the role'))
-    }
-};
-exports.deleteAll = async (req, res, next) => {
-    try {
-        const documents = await Permissions.destroy({
-            where: {}
-        });
-        return res.json({ message: documents, status: "success" });
-    } catch (error) {
-        return next(new ApiError(500, 'An error occurred while deleting all the role'))
-    }
-};
+

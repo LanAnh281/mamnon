@@ -19,8 +19,16 @@ app.use(bodyParser.json());
 const http = require("http");
 const server = http.createServer(app);
 //route
-
 const roleRouter = require("./app/route/role.route");
+const permissionRouter = require("./app/route/permission.route");
+const rolePermissionRouter = require("./app/route/rolePermission.route");
+
+const schoolRouter = require("./app/route/school.route");
+const schoolMediaRouter = require("./app/route/schoolMedia.route");
+
+const categoriesRoute = require("./app/route/categories.route");
+const foodListRoute = require("./app/route/foodList.route");
+// aPI
 app.use("/static", express.static(path.join(__dirname, "static")));
 server.listen(3000, () => {
   console.log(`Server is listening on port`);
@@ -44,9 +52,16 @@ const convertToLowercase = (req, res, next) => {
 };
 
 app.use(convertToLowercase);
-//
-
+//router
 app.use("/api/role", roleRouter);
+app.use("/api/permission", permissionRouter);
+app.use("/api/rolePermission", rolePermissionRouter);
+app.use("/api/school", schoolRouter);
+app.use("/api/schoolMedia", schoolMediaRouter);
+app.use("/api/categories", categoriesRoute);
+app.use("/api/foodList", foodListRoute);
+
+// API
 // check errors
 app.use((req, res, next) => {
   return next(createError(404, "Resource Not Found"));

@@ -22,7 +22,7 @@ const Roles = sequelize.define("Roles", {
   },
 });
 
-const Positions = sequelize.define("Positions", {
+const Permissions = sequelize.define("Permissions", {
   _id: setPrimary,
   name: {
     type: DataTypes.TEXT,
@@ -30,7 +30,7 @@ const Positions = sequelize.define("Positions", {
 
   },
 });
-const Roles_Positions = sequelize.define("Roles_Positions", {});
+const rolePermission = sequelize.define("rolePermission", {});
 
 const Accounts = sequelize.define("Accounts", {
   _id: setPrimary,
@@ -89,28 +89,80 @@ const Users = sequelize.define("Users", {
 
 });
 
+const Categories = sequelize.define("Categories", {
+  _id: setPrimary,
+  name: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+});
+const School = sequelize.define("School", {
+  _id: setPrimary,
+  name: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  phone: {
+    type: DataTypes.STRING,
+  },
+  address: {
+    type: DataTypes.TEXT,
+  },
+  email: {
+    type: DataTypes.TEXT,
+    allowNull: false,
 
+  },
+  clientId: {
+    type: DataTypes.TEXT,
+  },
+  secretId: {
+    type: DataTypes.TEXT,
+  },
+  TAXID: {
+    type: DataTypes.STRING,
+  }
 
+});
+const schoolMedia = sequelize.define("schoolMedia", {
+  _id: setPrimary,
+  name: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+});
+const foodList = sequelize.define("foodList", {
+  _id: setPrimary,
+  name: {
+    type: DataTypes.STRING,
+  },
+  material: {
+    type: DataTypes.TEXT,
+  },
+  quanity: {
+    type: DataTypes.INTEGER,
+  }
+})
 // checked
 //many-to-many relationship
-Roles.belongsToMany(Positions, {
-  through: Roles_Positions,
+Roles.belongsToMany(Permissions, {
+  through: rolePermission,
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
-Positions.belongsToMany(Roles, {
-  through: Roles_Positions,
+Permissions.belongsToMany(Roles, {
+  through: rolePermission,
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
 // one-to-many relationship
-Positions.hasMany(Accounts, {
-  foreignKey: "positionId",
+Permissions.hasMany(Accounts, {
+  foreignKey: "permisionId",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
-Accounts.belongsTo(Positions, {
-  foreignKey: "positionId",
+Accounts.belongsTo(Permissions, {
+  foreignKey: "permissionId",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
@@ -126,23 +178,45 @@ Accounts.belongsTo(Users, {
   onUpdate: "CASCADE",
 });
 
-
-
-
-
+School.hasMany(schoolMedia, {
+  foreignKey: "schoolId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+schoolMedia.belongsTo(School, {
+  foreignKey: "schoolId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+Categories.hasOne(foodList, {
+  foreignKey: "categoriesId",
+  onUpdate: "CASCADE",
+  onDelete: "CASCADE"
+})
+foodList.belongsTo(Categories, {
+  foreignKey: "categoriesId",
+  onUpdate: "CASCADE",
+  onDelete: "CASCADE"
+})
 // Sync the model with the database
 Roles.sync();
-Positions.sync();
-Roles_Positions.sync();
+Permissions.sync();
+rolePermission.sync();
 Accounts.sync();
 Users.sync();
-
+Categories.sync();
+School.sync();
+schoolMedia.sync();
+foodList.sync();
 
 module.exports = {
   Roles,
-  Positions,
-  Roles_Positions,
+  Permissions,
+  rolePermission,
   Accounts,
   Users,
-
+  Categories,
+  School,
+  schoolMedia,
+  foodList
 };

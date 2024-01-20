@@ -73,12 +73,10 @@ exports.delete = async (req, res, next) => {
 exports.deleteAll = async (req, res, next) => {
   try {
     const documents = await Roles.destroy({
-      //  where: {}
+      where: {}
     });
     return res.json({ message: documents, status: "success" });
   } catch (error) {
-    console.log(error);
-
     return next(new ApiError(500, 'An error occurred while deleting all the role'))
   }
 };
