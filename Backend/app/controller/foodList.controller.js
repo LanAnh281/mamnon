@@ -16,7 +16,14 @@ exports.create = async (req, res, next) => {
         return next(new ApiError(500, 'An error occurred while creating the food'))
     }
 };
-
+exports.findAll = async (req, res, next) => {
+    try {
+        const document = await foodList.findAll();
+        return res.json({ message: document, status: "success" });
+    } catch (error) {
+        return next(new ApiError(500, 'An error occurred while updating the food'))
+    }
+}
 
 exports.updated = async (req, res, next) => {
     const { name, material, quanity, categoriesId } = req.body;

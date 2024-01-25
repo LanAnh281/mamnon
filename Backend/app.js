@@ -28,7 +28,11 @@ const schoolMediaRouter = require("./app/route/schoolMedia.route");
 
 const categoriesRoute = require("./app/route/categories.route");
 const foodListRoute = require("./app/route/foodList.route");
-// aPI
+const menuDailyRoute = require("./app/route/menuDaily.route");
+const gradeRoute = require("./app/route/grade.route");
+const courseRoute = require("./app/route/course.route");
+const classRoomRoute = require("./app/route/classroom.route")
+// API
 app.use("/static", express.static(path.join(__dirname, "static")));
 server.listen(3000, () => {
   console.log(`Server is listening on port`);
@@ -60,7 +64,10 @@ app.use("/api/school", schoolRouter);
 app.use("/api/schoolMedia", schoolMediaRouter);
 app.use("/api/categories", categoriesRoute);
 app.use("/api/foodList", foodListRoute);
-
+app.use("/api/menuDaily", menuDailyRoute);
+app.use("/api/grade", gradeRoute);
+app.use("/api/course", courseRoute);
+app.use("/api/classRoom", classRoomRoute);
 // API
 // check errors
 app.use((req, res, next) => {

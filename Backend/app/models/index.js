@@ -34,7 +34,7 @@ const rolePermission = sequelize.define("rolePermission", {});
 
 const Accounts = sequelize.define("Accounts", {
   _id: setPrimary,
-  userName: {
+  name: {
     type: DataTypes.TEXT,
     allowNull: false,
 
@@ -55,7 +55,7 @@ const Accounts = sequelize.define("Accounts", {
 });
 const Users = sequelize.define("Users", {
   _id: setPrimary,
-  userName: {
+  name: {
     type: DataTypes.TEXT,
     allowNull: false,
     validate: {
@@ -65,7 +65,7 @@ const Users = sequelize.define("Users", {
     },
   },
   birthday: { type: DataTypes.DATE },
-  sex: { type: DataTypes.BOOLEAN },
+  gender: { type: DataTypes.BOOLEAN },
   identification: {
     type: DataTypes.STRING,
   },
@@ -75,7 +75,6 @@ const Users = sequelize.define("Users", {
   email: {
     type: DataTypes.TEXT,
     allowNull: false,
-
   },
   phone: {
     type: DataTypes.STRING,
@@ -86,6 +85,9 @@ const Users = sequelize.define("Users", {
   imageAfter: {
     type: DataTypes.TEXT,
   },
+  image: {
+    type: DataTypes.TEXT
+  }
 
 });
 
@@ -143,6 +145,57 @@ const foodList = sequelize.define("foodList", {
     type: DataTypes.INTEGER,
   }
 })
+const daily = sequelize.define("daily", {
+  _id: setPrimary,
+  date: {
+    type: DataTypes.DATE,
+  }
+})
+const menuDaily = sequelize.define("menuDaily", {});
+const grade = sequelize.define("grade", {
+  _id: setPrimary,
+  name: {
+    type: DataTypes.STRING,
+  },
+  description: {
+    type: DataTypes.TEXT
+  }
+
+})
+const course = sequelize.define("course", {
+  _id: setPrimary,
+  name: {
+    type: DataTypes.STRING,
+  },
+  start: {
+    type: DataTypes.STRING
+  },
+  end: {
+    type: DataTypes.STRING
+  }
+})
+const classRoom = sequelize.define("classRoom", {
+  _id: setPrimary,
+  name: {
+    type: DataTypes.STRING,
+  },
+})
+const BMI = sequelize.define("BMI", {
+  _id: setPrimary,
+  weight: {
+    type: DataTypes.INTEGER,
+  },
+  height: {
+    type: DataTypes.INTEGER,
+  },
+  type: {
+    type: DataTypes.STRING,
+  },
+  BMI: {
+    type: DataTypes.FLOAT
+  }
+
+})
 // checked
 //many-to-many relationship
 Roles.belongsToMany(Permissions, {
@@ -198,6 +251,19 @@ foodList.belongsTo(Categories, {
   onUpdate: "CASCADE",
   onDelete: "CASCADE"
 })
+foodList.belongsToMany(daily, {
+  through: menuDaily,
+  onUpdate: "CASCADE",
+  onDelete: "CASCADE"
+})
+daily.belongsToMany(foodList, {
+  through: menuDaily,
+  onUpdate: "CASCADE",
+  onDelete: "CASCADE"
+})
+grade.hasMany(classRoom);
+course.hasMany(classRoom);
+
 // Sync the model with the database
 Roles.sync();
 Permissions.sync();
@@ -208,7 +274,12 @@ Categories.sync();
 School.sync();
 schoolMedia.sync();
 foodList.sync();
-
+daily.sync();
+menuDaily.sync();
+grade.sync();
+course.sync();
+classRoom.sync();
+BMI.sync();
 module.exports = {
   Roles,
   Permissions,
@@ -218,5 +289,11 @@ module.exports = {
   Categories,
   School,
   schoolMedia,
-  foodList
+  foodList,
+  daily,
+  menuDaily,
+  grade,
+  course,
+  classRoom,
+  BMI
 };
