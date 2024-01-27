@@ -123,6 +123,12 @@ const School = sequelize.define("School", {
   },
   TAXID: {
     type: DataTypes.STRING,
+  },
+  logan: {
+    type: DataTypes.TEXT
+  },
+  information: {
+    type: DataTypes.TEXT
   }
 
 });
@@ -194,7 +200,18 @@ const BMI = sequelize.define("BMI", {
   BMI: {
     type: DataTypes.FLOAT
   }
-
+})
+const certification = sequelize.define("certification", {
+  _id: setPrimary,
+  issuedate: {
+    type: DataTypes.DATE,
+  },
+  imagePrevious: {
+    type: DataTypes.STRING,
+  },
+  imageAfter: {
+    type: DataTypes.STRING
+  }
 })
 // checked
 //many-to-many relationship
@@ -264,6 +281,16 @@ daily.belongsToMany(foodList, {
 grade.hasMany(classRoom);
 course.hasMany(classRoom);
 
+Users.hasMany(certification, {
+  foreignKey: "userId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+certification.belongsTo(Users, {
+  foreignKey: "userId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
 // Sync the model with the database
 Roles.sync();
 Permissions.sync();
@@ -280,6 +307,7 @@ grade.sync();
 course.sync();
 classRoom.sync();
 BMI.sync();
+certification.sync();
 module.exports = {
   Roles,
   Permissions,
@@ -295,5 +323,6 @@ module.exports = {
   grade,
   course,
   classRoom,
-  BMI
+  BMI,
+  certification
 };
