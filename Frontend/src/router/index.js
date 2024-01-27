@@ -12,7 +12,11 @@ const routes = [
     name: "Account",
     component: () => import("../view/admin/account/account.vue"),
   },
-
+  {
+    path: "/admin/school",
+    name: "school",
+    component: () => import("../view/admin/school/index.vue"),
+  },
   //User
 
   {

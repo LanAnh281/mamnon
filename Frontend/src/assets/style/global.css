@@ -13,8 +13,7 @@
     --chocolate: #d2691e;
     --beige: #f2f2d3;
     --green: #93c524;
-    --header: 10vh;
-    /* --footer: vh; */
+    --header: 8vh;
     --navbar: 10vh;
     --background-login: url('../image/background.jpg');
 
@@ -42,6 +41,7 @@
     background-color: var(--white);
     height: var(--header);
     padding: 0 30px;
+    line-height: 3;
 }
 
 .navbar {
@@ -59,7 +59,7 @@
 }
 
 .sidebar {
-    background-color: var(--red);
+    background-color: var(--black-light);
     display: inline-block;
 }
 
@@ -84,4 +84,14 @@
 
 .btn-login:hover {
     color: var(--beige)
+}
+
+h2 {
+    text-transform: uppercase;
+}
+
+.dash {
+    border: 2px solid blue;
+    text-align: center;
+    width: 60px
 }

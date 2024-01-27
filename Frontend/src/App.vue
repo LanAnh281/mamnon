@@ -1,11 +1,11 @@
 <template>
   <div>
     <div v-if="isLoginPath == false">
-      <Header></Header>
+      <Header v-if="username != 'admin'"></Header>
 
       <div class="fluid-container">
         <div class="row m-0 p-0">
-          <!-- <SideBar class="col-2"></SideBar> -->
+          <SideBar class="col-2" v-if="username == 'admin'"></SideBar>
           <span class=""></span>
           <router-view class="col"></router-view>
         </div>
@@ -34,7 +34,11 @@ export default {
   setup() {
     const route = useRoute();
     const isLoginPath = ref(false);
-    onMounted(() => { });
+    const username = ref('');
+    onMounted(() => {
+      username.value = localStorage.getItem('username');
+      console.log(username.value);
+    });
     watch(
       () => route.fullPath,
       (newPath, oldPath) => {
@@ -51,6 +55,7 @@ export default {
 
     return {
       isLoginPath,
+      username
     };
   },
 };

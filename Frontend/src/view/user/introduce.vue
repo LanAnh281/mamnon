@@ -1,3 +1,29 @@
+<script>
+import { reactive, onMounted } from "vue";
+import schoolService from "../../service/school.service";
+export default {
+    components: {},
+    setup() {
+        const data = reactive({
+            items: {
+
+            }
+        })
+        onMounted(async () => {
+            try {
+                const document = await schoolService.getAll();
+                data.items = document.message;
+            } catch (error) {
+
+            }
+        })
+        return {
+            data
+        }
+    }
+}
+</script>
+
 <template>
     <div class="body ">
         <div class="pt-3 px-4">
@@ -8,29 +34,19 @@
                 GIỚI THIỆU
             </router-link>
         </div>
-        <div class="post">
+        <!--  -->
+        <div class="logan col-12 py-4 bg-primary">
             <img src="" alt="logo" class="img-fluid mx-auto d-block">
+            <h2>{{ data.items['logan'] }}</h2>
+        </div>
+        <div class="post">
             <h1>Trường mầm non ...</h1>
-            <p>Nội dung giới thiệu trường</p>
+            <p>{{ data.items['information'] }}</p>
             <img src="https://cdn.lawnet.vn/uploads/tintuc/2022/12/16/truong-mam-non.jpg" alt="ảnh trường mầm non"
                 class="img-fluid mx-auto d-block">
 
         </div>
-        <!--  -->
-        <div class="logan col-12 pt-3 mt-2 bg-primary">
 
-            <h5>Được thành lập từ 2008 với phương châm hoạt động
-                “Ươm mầm tương lai”, trải qua gần 15 năm hình thành
-                và phát triển, hệ thống trường mầm non Việt Đức
-                đã không ngừng phát triển, khẳng định được chất lượng
-                uy tín với quý phụ huynh cũng như vị trí xã hội về
-                mặt giáo dục và đào tạo trẻ ở lứa tuổi mầm non.</h5>
-            <h6>Đến với trường mầm non Việt Đức, các bé sẽ được đáp ứng đầy đủ các nhu cầu để bảo đảm sự phát triển tốt nhất
-                về
-                thể
-                chất lẫn tinh thần.
-            </h6>
-        </div>
     </div>
 </template>
 <style>
@@ -42,10 +58,10 @@
     text-align: center;
 }
 
-.logan h5,
-.logan h6 {
-    color: #454545;
-    line-height: 1.8;
+.logan h2 {
+    text-transform: uppercase;
+    font-size: 48px;
+    color: antiquewhite
 }
 
 .logan .material-symbols-outlined {
