@@ -12,11 +12,33 @@ const routes = [
     name: "Account",
     component: () => import("../view/admin/account/account.vue"),
   },
+
   //User
+
   {
     path: "/",
-    name: "User",
+    name: "homepage",
     component: () => import("../view/user/index.vue"),
+  },
+  {
+    path: "/introduce",
+    name: "introduce",
+    component: () => import("../view/user/introduce.vue"),
+  },
+  {
+    path: "/programStudy",
+    name: "programStudy",
+    component: () => import("../view/user/programStudy.vue"),
+  },
+  {
+    path: "/detailStudy",
+    name: "detailStudy",
+    component: () => import("../view/user/detailStudy.vue"),
+  },
+  {
+    path: "/contact",
+    name: "contact",
+    component: () => import("../view/user/contact.vue"),
   },
 ];
 

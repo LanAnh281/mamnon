@@ -6,7 +6,7 @@
       <div class="fluid-container">
         <div class="row m-0 p-0">
           <!-- <SideBar class="col-2"></SideBar> -->
-          <span class="mr-2"></span>
+          <span class=""></span>
           <router-view class="col"></router-view>
         </div>
         <Footer></Footer>
@@ -34,7 +34,7 @@ export default {
   setup() {
     const route = useRoute();
     const isLoginPath = ref(false);
-    onMounted(() => {});
+    onMounted(() => { });
     watch(
       () => route.fullPath,
       (newPath, oldPath) => {
