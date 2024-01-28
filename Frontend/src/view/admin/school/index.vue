@@ -1,67 +1,153 @@
 <script>
 import { ref, reactive, onMounted } from "vue";
 import schoolService from "../../../service/school.service";
-
+//component
+import add from "./add.vue";
+//js
+import { success } from "../../../assets/js/alert.common";
 export default {
-    components: {},
+    components: { add },
     setup() {
         const data = reactive({
-            items: {},
+            items: {
+                name: "", phone: "", email: "", TAXID: "", address: "", clientId: "", secretId: "", logan: "", information: ""
+            },
+            isSchool: false
         })
         const update = async () => {
             try {
-                console.log('upda');
-                // remove list
-                //add list
+                const document = await schoolService.update(data.items["_id"], data.items);
+                if (document['status'] == 'success') {
+                    success("Thành công", 'Cập nhật thành công')
+                }
             } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
+        }
+        const add = async () => {
+            try {
+                data.isSchool = !data.isSchool;
 
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
             }
         }
         const deleteImg = async () => {
             try {
                 console.log('de');
             } catch (error) {
-
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
             }
         }
         onMounted(async () => {
-            const document = await schoolService.getAll();
-            data.items = document.message;
+            try {
+                const document = await schoolService.getAll();
+                data.items = document.message;
+
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
         })
         return {
-            data, update, deleteImg
+            data, update, deleteImg, add
         }
     }
 }
 </script>
 <template>
     <div class="body p-3">
+
         <div class="information">
             <h2 class="text-primary">Thông tin trường học</h2>
             <p class="mx-auto dash"></p>
             <div class="float-right mx-3 btn btn-success" @click="update">Lưu</div>
-            <p> Tên trường:
-                <input type="text" name="name" id="name" v-model="data.items['name']">
-            </p>
-            <p>SĐT:
-                <input type="text" name="name" id="phone" v-model="data.items['phone']">
-            </p>
 
-            <p>Email:
-                <input type="text" name="email" id="email" v-model="data.items['email']">
-            </p>
-            <p>Địa chỉ:
-                <input type="text" name="address" id="adress" v-model="data.items['address']">
+            <form action="" method="post" class=" row">
+                <div class="col-6">
+                    <div class="form-group row">
+                        <label for="name" class="col-2">Trường: </label>
+                        <input type="text" class="form-control col-10" id="name" name="name" v-model="data.items['name']">
+                    </div>
+                    <div class="form-group row">
+                        <label for="phone" class="col-2">SĐT: </label>
+                        <input type="tel" name="phone" id="phone" class="form-control col-10" v-model="data.items['phone']">
+                    </div>
+                    <div class="form-group row">
+                        <label for="email" class="col-2">Email: </label>
+                        <input type="email" name="email" id="email" class="form-control col-10"
+                            v-model="data.items['email']">
+                    </div>
+                    <div class="form-group row">
+                        <label for="address" class="col-2">Địa chỉ: </label>
+                        <input type="text" name="address" id="address" v-model="data.items['address']"
+                            class="form-control col-10">
+                    </div>
+                    <div class="form-group row">
+                        <label for="TAXID" class="col-2">MST: </label>
+                        <input type="text" name="TAXID" id="TAXID" v-model="data.items['TAXID']"
+                            class="form-control col-10">
+                    </div>
+                    <div class="form-group row">
+                        <label for="clientId" class="col-2">clientId: </label>
+                        <input type="text" name="clientId" id="clientId" v-model="data.items['clientId']"
+                            class="form-control col-10">
+                    </div>
+                    <div class="form-group row">
+                        <label for="secretId" class="col-2">clientId: </label>
+                        <input type="text" name="clientId" id="secretId" v-model="data.items['secretId']"
+                            class="form-control col-10">
+                    </div>
+                </div>
 
-            </p>
-            <p>Mã số thuế:
-                <input type="text" name="TAXID" id="TAXID" v-model="data.items['TAXID']">
-            </p>
+                <div class="col-6">
+                    <div class="form-group row">
+                        <label for="logan" class="col-2">Logan: </label>
+                        <textarea type="text" name="logan" id="logan" v-model="data.items['logan']"
+                            class="form-control col-10"></textarea>
+                    </div>
+                    <div class="form-group row">
+                        <label for="information" class="col-2">Thông tin: </label>
+                        <textarea name="information" id="information" v-model="data.items['information']"
+                            class="form-control col-10" rows="10"></textarea>
+                    </div>
+                </div>
+
+            </form>
+
         </div>
         <div>
             <h2 class="text-primary">Góc ảnh ...</h2>
             <p class="dash mx-auto"></p>
-            <div class="float-right mx-3 btn btn-success" @click="update">+</div>
+            <!-- form -->
+            <div class="float-right mx-3 btn btn-success" @click="add" data-toggle="modal" data-target="#schoolModal">
+                +
+            </div>
+            <add v-if="data.isSchool" @closeModal="data.isSchool = !data.isSchool"></add>
+
 
             <div class="row">
                 <div class="col-4 img-school">
@@ -78,7 +164,8 @@ h2 {
     text-align: center;
 }
 
-.information input {
+.information input,
+.information textarea {
     padding: 6px;
     background-color: var(--light);
     border: none;

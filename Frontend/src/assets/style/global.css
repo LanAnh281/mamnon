@@ -78,20 +78,25 @@
 }
 
 .btn-login {
-    background-color: var(--chocolate);
-    color: var(--white);
+    background-color: var(--blue-light);
+    color: rgb(255, 255, 255);
+    text-transform: uppercase;
+
 }
 
 .btn-login:hover {
-    color: var(--beige)
+    color: var(--beige);
+    background-color: rgba(51, 82, 239, 0.9);
 }
 
-h2 {
+h2,
+h3 {
     text-transform: uppercase;
+    color: blue;
 }
 
 .dash {
     border: 2px solid blue;
     text-align: center;
-    width: 60px
+    width: 50px
 }

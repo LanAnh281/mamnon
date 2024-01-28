@@ -13,16 +13,18 @@
       <li>
         <router-link :to="{ name: 'programStudy' }">Chương trình học</router-link>
       </li>
-      <li>
+      <!-- <li>
         <router-link :to="{ name: 'homepage' }">Học Phí</router-link>
-      </li>
-      <li>
+      </li> -->
+      <!-- <li>
         <router-link :to="{ name: 'homepage' }">Tuyển sinh</router-link>
-      </li>
+      </li> -->
       <li>
         <router-link :to="{ name: 'contact' }">Liên hệ</router-link>
       </li>
-      <li>Đăng nhập</li>
+      <li>
+        <router-link :to="{ name: 'login' }">Đăng nhập</router-link>
+      </li>
 
     </ul>
   </div>
