@@ -1,10 +1,9 @@
-const { foodList } = require("../models/index");
+const { food } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
     const { name, material, quanity, categoriesId } = req.body;
-    console.log("foodList Body:", req.body);
     try {
-        const document = await foodList.create({
+        const document = await food.create({
             name: name,
             material: material,
             quanity: quanity,
@@ -18,7 +17,7 @@ exports.create = async (req, res, next) => {
 };
 exports.findAll = async (req, res, next) => {
     try {
-        const document = await foodList.findAll();
+        const document = await food.findAll();
         return res.json({ message: document, status: "success" });
     } catch (error) {
         return next(new ApiError(500, 'An error occurred while updating the food'))
@@ -27,9 +26,9 @@ exports.findAll = async (req, res, next) => {
 
 exports.updated = async (req, res, next) => {
     const { name, material, quanity, categoriesId } = req.body;
-    console.log("Update foodList", req.body);
+    console.log("Update food", req.body);
     try {
-        const document = await foodList.update(
+        const document = await food.update(
             {
                 name: name,
                 material: material,
@@ -50,7 +49,7 @@ exports.updated = async (req, res, next) => {
 };
 exports.delete = async (req, res, next) => {
     try {
-        const document = await foodList.destroy({
+        const document = await food.destroy({
             where: {
                 _id: req.params.id,
             },

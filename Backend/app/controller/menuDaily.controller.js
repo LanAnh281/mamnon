@@ -1,17 +1,17 @@
-const { daily, menuDaily, foodList } = require("../models/index");
+const { daily, menuDaily, food } = require("../models/index");
 const ApiError = require("../api-error")
 const { sequelize } = require("../config/index");
 exports.create = async (req, res, next) => {
-    const { date, menu } = req.body;
+    const { date, day, menu } = req.body;
     try {
         const transaction = await sequelize.transaction()
         // Thêm ngày làm thực đơn
-        const documentDate = await daily.create({ date: date }, { transaction });
+        const documentDate = await daily.create({ date: date, day: day }, { transaction });
         // thêm danh sách món ăn và thực đơn
         let status = false;
         for (const idFood of menu) {
             const document = await menuDaily.create({
-                foodListId: idFood,
+                foodId: idFood,
                 dailyId: documentDate._id
             }, { transaction })
         }
@@ -26,7 +26,7 @@ exports.findAll = async (req, res, next) => {
     try {
         const documents = await daily.findAll({
             include: [{
-                model: foodList,
+                model: food,
                 through: menuDaily
 
             }]
@@ -42,7 +42,7 @@ exports.findOne = async (req, res, next) => {
         console.log(req.params.id);
         const document = await daily.findAll({
             include: [{
-                model: foodList,
+                model: food,
                 through: menuDaily
 
             }],
@@ -58,13 +58,14 @@ exports.findOne = async (req, res, next) => {
     }
 };
 exports.updated = async (req, res, next) => {
-    const { date, addMenu, removeMenu } = req.body;
+    const { date, day, addMenu, removeMenu } = req.body;
     console.log("Update Menu", req.body);
     try {
         const transaction = await sequelize.transaction();
         const document = await daily.update(
             {
                 date: date,
+                day: day
             },
             {
                 where: {
@@ -77,7 +78,7 @@ exports.updated = async (req, res, next) => {
             console.log("RV idFood: ", idFood);
             const documentDestroy = menuDaily.destroy({
                 where: {
-                    foodListId: idFood,
+                    foodId: idFood,
                     dailyId: req.params.id,
                 },
             }, { transaction })
@@ -86,7 +87,7 @@ exports.updated = async (req, res, next) => {
         for (const idFood of addMenu) {
             console.log("ADD idFood: ", idFood);
             const documentAdd = await menuDaily.create({
-                foodListId: idFood,
+                foodId: idFood,
                 dailyId: req.params.id
             }, { transaction })
         } await transaction.commit();

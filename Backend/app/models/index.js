@@ -139,7 +139,7 @@ const schoolMedia = sequelize.define("schoolMedia", {
     allowNull: false,
   },
 });
-const foodList = sequelize.define("foodList", {
+const food = sequelize.define("food", {
   _id: setPrimary,
   name: {
     type: DataTypes.STRING,
@@ -155,9 +155,14 @@ const daily = sequelize.define("daily", {
   _id: setPrimary,
   date: {
     type: DataTypes.DATE,
+  },
+  day: {
+    type: DataTypes.STRING
   }
 })
-const menuDaily = sequelize.define("menuDaily", {});
+const menuDaily = sequelize.define("menuDaily", {
+
+});
 const grade = sequelize.define("grade", {
   _id: setPrimary,
   name: {
@@ -258,22 +263,22 @@ schoolMedia.belongsTo(School, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 })
-Categories.hasOne(foodList, {
+Categories.hasOne(food, {
   foreignKey: "categoriesId",
   onUpdate: "CASCADE",
   onDelete: "CASCADE"
 })
-foodList.belongsTo(Categories, {
+food.belongsTo(Categories, {
   foreignKey: "categoriesId",
   onUpdate: "CASCADE",
   onDelete: "CASCADE"
 })
-foodList.belongsToMany(daily, {
+food.belongsToMany(daily, {
   through: menuDaily,
   onUpdate: "CASCADE",
   onDelete: "CASCADE"
 })
-daily.belongsToMany(foodList, {
+daily.belongsToMany(food, {
   through: menuDaily,
   onUpdate: "CASCADE",
   onDelete: "CASCADE"
@@ -300,7 +305,7 @@ Users.sync();
 Categories.sync();
 School.sync();
 schoolMedia.sync();
-foodList.sync();
+food.sync();
 daily.sync();
 menuDaily.sync();
 grade.sync();
@@ -317,7 +322,7 @@ module.exports = {
   Categories,
   School,
   schoolMedia,
-  foodList,
+  food,
   daily,
   menuDaily,
   grade,

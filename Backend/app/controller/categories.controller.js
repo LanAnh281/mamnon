@@ -1,4 +1,4 @@
-const { Categories, foodList } = require("../models/index");
+const { Categories, food } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
     const { name } = req.body;
@@ -26,7 +26,7 @@ exports.findOne = async (req, res, next) => {
                 _id: req.params.id,
             },
             include: [{
-                model: foodList,
+                model: food,
             }]
         });
         return res.json({ message: document, status: "success" });
