@@ -1,5 +1,5 @@
 <script>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 export default {
     components: {},
     props: {
@@ -9,10 +9,12 @@ export default {
         action: { type: Boolean, default: false },
         actionList: { type: Array, default: [] },
         name: { type: String, default: "" },
-        currentPage: "",
-        sizePage: "",
     },
     setup(props, emit) {
+        onMounted(async () => {
+            console.log("props:"
+                , props.data)
+        })
         return {};
     },
 };

@@ -17,6 +17,7 @@ export default {
         },
         { name: "Giáo viên", icon: "person", active: "customer" },
         { name: "Lớp học", icon: "holiday_village", active: "room" },
+        { name: "Thực đơn", icon: "menu", active: "menuDaily" },
 
         {
           name: "Hóa đơn",
@@ -43,6 +44,9 @@ export default {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("expiresIn");
       localStorage.removeItem("position");
+      localStorage.setItem("username", '');
+      router.push({ name: 'homepage' })
+
     };
     watch(
       () => route.fullPath,

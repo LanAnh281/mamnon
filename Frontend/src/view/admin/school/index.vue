@@ -80,9 +80,8 @@ export default {
 </script>
 <template>
     <div class="body p-3">
-
         <div class="information">
-            <h2 class="text-primary">Thông tin trường học</h2>
+            <h2>Thông tin trường học</h2>
             <p class="mx-auto dash"></p>
             <div class="float-right mx-3 btn btn-success" @click="update">Lưu</div>
 

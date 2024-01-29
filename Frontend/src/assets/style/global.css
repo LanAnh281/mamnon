@@ -90,7 +90,8 @@
 }
 
 h2,
-h3 {
+h3,
+h5 {
     text-transform: uppercase;
     color: blue;
 }
@@ -99,4 +100,30 @@ h3 {
     border: 2px solid blue;
     text-align: center;
     width: 50px
+}
+
+.material-symbols-outlined {
+    font-size: 24px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.material-symbols-outlined:hover {
+    opacity: .6;
+}
+
+.delete-icon,
+.edit-icon {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px;
+    margin-right: 4px;
+}
+
+.delete-icon {
+    color: red;
+}
+
+.edit-icon {
+    color: orange
 }

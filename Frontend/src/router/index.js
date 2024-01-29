@@ -17,6 +17,11 @@ const routes = [
     name: "school",
     component: () => import("../view/admin/school/index.vue"),
   },
+  {
+    path: "/admin/menuDaily",
+    name: "menuDaily",
+    component: () => import("../view/admin/menuDaily/index.vue"),
+  },
   //User
 
   {

@@ -49,8 +49,12 @@ export default {
         // Xử lý khi chuyển trang xảy ra
         console.log("Đã chuyển từ:", oldPath);
         console.log("Đã chuyển đến:", newPath);
+        if (newPath == "/") {
+          username.value = '';
+        }
         // Thực hiện các hành động khác khi chuyển trang xảy ra
       }
+
     );
 
     return {
