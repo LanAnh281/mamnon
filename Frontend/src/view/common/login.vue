@@ -54,8 +54,8 @@ export default {
 
       <div class="card shadow col-4 rounded py-5 login-card">
         <div class="row justify-content-center">
-          <router-link :to="{ name: 'homepage' }" class="col-3">
-            <img src="" alt="logo" />
+          <router-link :to="{ name: 'homepage' }" class="col-4">
+            <img src="../../assets/image/logo1.png" alt="logo" class="img-fluid" />
           </router-link>
           <h2 class="text-center mt-3 ml-3 col-12">Đăng nhập</h2>
         </div>

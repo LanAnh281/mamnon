@@ -22,6 +22,11 @@ const routes = [
     name: "menuDaily",
     component: () => import("../view/admin/menuDaily/index.vue"),
   },
+  {
+    path: "/admin/teacher",
+    name: "teacher",
+    component: () => import("../view/admin/teacher/index.vue"),
+  },
   //User
 
   {

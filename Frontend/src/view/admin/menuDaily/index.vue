@@ -13,6 +13,7 @@ export default {
         const data = reactive({
             items: [],
         })
+        const isAdd = ref(false);
         const refresh = async () => {
             try {
                 const document = await menuDailyService.getAll();
@@ -47,7 +48,8 @@ export default {
             }
         })
         return {
-            data
+            data,
+            isAdd
         }
     }
 }
@@ -55,12 +57,12 @@ export default {
 <template>
     <div class="body p-3">
         <div class="border rounded row justify-content-end">
-            <button class="btn-success m-2" data-toggle="modal" data-target="#menuModal">
+            <button class="btn-success m-2" data-toggle="modal" data-target="#menuModal" @click="isAdd = !isAdd">
                 <span class="material-symbols-outlined text-light">
                     add
                 </span>
             </button>
-            <Add></Add>
+            <Add v-if="isAdd" @closeModal="isAdd = !isAdd"></Add>
         </div>
         <h2 class="text-center">Thực đơn</h2>
         <p class="dash mx-auto"></p>

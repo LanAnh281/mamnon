@@ -1,9 +1,10 @@
 <script>
-import { reactive } from 'vue';
-
+import { reactive, onMounted } from 'vue';
+// service
+import schoolService from '../../service/school.service';
 export default {
     setup() {
-        const data = reactive({ item: {} });
+        const data = reactive({ item: {}, school: {} });
         const save = async () => {
             try {
                 console.log('data.item:', data.item)
@@ -17,6 +18,34 @@ export default {
                 }
             }
         }
+        const refresh = async () => {
+            try {
+                const document = await schoolService.getAll()
+                data.school = document.message;
+
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
+        }
+        onMounted(async () => {
+            try {
+                await refresh();
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
+        })
         return {
             data,
             save
@@ -35,7 +64,7 @@ export default {
             </router-link>
         </div>
         <div class="row p-3">
-            <div class="col-9">
+            <div class="col-8">
                 <h3 class="my-3">Liên hệ qua biểu mẫu</h3>
                 <p class="dash"></p>
 
@@ -78,15 +107,15 @@ export default {
                     </div>
                 </form>
             </div>
-            <div class="col-3">
+            <div class="col-4">
                 <h3 class="my-3">Tư vấn & giải đáp</h3>
                 <p class="dash"></p>
                 <div class="row contact">
-                    <img src="" alt="logo" class="col-3">
+                    <img src="../../assets/image/logo1.png" alt="logo" class="col-3 img-fluid">
                     <div class="col-9">
-                        <p>Tên trường</p>
-                        <p>SĐT:</p>
-                        <p>Email:</p>
+                        <p>Tên trường: {{ data.school['name'] }}</p>
+                        <p>SĐT: {{ data.school['phone'] }}</p>
+                        <p>Email: {{ data.school['email'] }}</p>
                     </div>
                 </div>
 

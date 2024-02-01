@@ -15,7 +15,7 @@ export default {
           icon: "school",
           active: "school",
         },
-        { name: "Giáo viên", icon: "person", active: "customer" },
+        { name: "Giáo viên", icon: "person", active: "teacher" },
         { name: "Lớp học", icon: "holiday_village", active: "room" },
         { name: "Thực đơn", icon: "menu", active: "menuDaily" },
 
@@ -66,7 +66,7 @@ export default {
 <template>
   <div class="sidebar px-0">
     <div style="width: 100%" class="row justify-items-around align-items-center">
-      <img src="../../assets/image/logo.png" style="
+      <img src="../../assets/image/logo1.png" style="
           object-fit: contain;
           box-shadow: 0 0 20px 1px rgba(255, 255, 0, 0.3);
         " class="col-3 ml-4 mr-0 p-0" />

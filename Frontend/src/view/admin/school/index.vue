@@ -120,6 +120,10 @@ export default {
                         <input type="text" name="clientId" id="secretId" v-model="data.items['secretId']"
                             class="form-control col-10">
                     </div>
+                    <div class="form-group row">
+                        <label for="linkFB" class="col-2">Link Facebook: </label>
+                        <input type="text" name="linkFB" id="linkFB" v-model="data.items['fb']" class="form-control col-10">
+                    </div>
                 </div>
 
                 <div class="col-6">

@@ -25,7 +25,7 @@ export default {
 </script>
 
 <template>
-    <div class="body ">
+    <div class="body">
         <div class="pt-3 px-4">
             <router-link :to="{ name: 'homepage' }">
                 TRANG CHỦ >
@@ -35,16 +35,15 @@ export default {
             </router-link>
         </div>
         <!--  -->
-        <div class="logan col-12 py-4 bg-primary">
-            <img src="" alt="logo" class="img-fluid mx-auto d-block">
-            <h2>{{ data.items['logan'] }}</h2>
+        <div class="logan col-12 py-4">
+            <img src="../../assets/image/logo1.png" alt="logo" class="img-fluid mx-auto d-block ">
+            <h2 class="text-primary">{{ data.items['logan'] }}</h2>
         </div>
-        <div class="post">
-            <h1>Trường mầm non ...</h1>
+        <div class="post col-12">
+            <h1 class="">Trường mầm non {{ data.items['name'] }}</h1>
             <p>{{ data.items['information'] }}</p>
             <img src="https://cdn.lawnet.vn/uploads/tintuc/2022/12/16/truong-mam-non.jpg" alt="ảnh trường mầm non"
                 class="img-fluid mx-auto d-block">
-
         </div>
 
     </div>

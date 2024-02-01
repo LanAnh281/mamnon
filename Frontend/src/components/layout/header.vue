@@ -1,9 +1,11 @@
 <script></script>
 <template>
   <div class="header row align-item-end">
-    <div class="logo col-2"><img src="" alt="logo"></div>
+    <div class="logo col-2 mx-5 mb-1 text-center">
+      <img src="../../assets/image/logo1.png" alt="logo" class="img-fluid w-50  h-75">
+    </div>
 
-    <ul class="header-list col-10 ">
+    <ul class="header-list col-9 text-left">
       <li>
         <router-link :to="{ name: 'homepage' }">Trang chủ </router-link>
       </li>
@@ -37,6 +39,10 @@
 .header-list {
   list-style: none;
   text-align: center;
+}
+
+.header-list li a {
+  font-size: 18px
 }
 
 .header-list li {

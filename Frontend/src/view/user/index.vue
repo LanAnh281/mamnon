@@ -1,3 +1,32 @@
+<script>
+import { reactive, onMounted } from "vue";
+// service
+import schoolService from "../../service/school.service";
+export default {
+  components: {},
+  setup() {
+    const data = reactive({ items: {} });
+    onMounted(async () => {
+      try {
+        const document = await schoolService.getAll();
+
+        data.items = document.message;
+      } catch (error) {
+        if (error.response) {
+          console.log("Server-side errors", error.response.data);
+        } else if (error.request) {
+          console.log("Client-side errors", error.request);
+        } else {
+          console.log("Errors:", error.message);
+        }
+      }
+    })
+    return {
+      data
+    }
+  }
+}
+</script>
 <template>
   <div class="body ">
     <div id="carouselExampleFade" class="carousel slide carousel-fade " data-ride="carousel">
@@ -28,17 +57,9 @@
         <span class="material-symbols-outlined">
           potted_plant
         </span>
-        <h5>Được thành lập từ 2008 với phương châm hoạt động
-          “Ươm mầm tương lai”, trải qua gần 15 năm hình thành
-          và phát triển, hệ thống trường mầm non Việt Đức
-          đã không ngừng phát triển, khẳng định được chất lượng
-          uy tín với quý phụ huynh cũng như vị trí xã hội về
-          mặt giáo dục và đào tạo trẻ ở lứa tuổi mầm non.</h5>
-        <h6>Đến với trường mầm non Việt Đức, các bé sẽ được đáp ứng đầy đủ các nhu cầu để bảo đảm sự phát triển tốt nhất
-          về
-          thể
-          chất lẫn tinh thần.
-        </h6>
+        <h2 class="text-light"> {{ data.items['logan'] }}
+        </h2>
+        <h6>{{ data.items['information'] }}</h6>
       </div>
       <!--  -->
       <div class="col-12 row classroom justify-content-center">
@@ -114,10 +135,15 @@
   color: #fff;
 }
 
+.logan h5 {
+  font-size: 20px;
+}
+
 .logan h5,
 .logan h6 {
-  color: #454545;
+  color: #ebe9e9;
   line-height: 1.8;
+
 }
 
 .logan .material-symbols-outlined,
