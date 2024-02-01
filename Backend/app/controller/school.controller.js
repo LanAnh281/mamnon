@@ -1,7 +1,7 @@
 const { School } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
-    const { name, address, phone, TaxId, clientId, secretId, email, logan, information } = req.body;
+    const { name, address, phone, TaxId, clientId, secretId, email, logan, information, fb } = req.body;
     console.log("School Body:", req.body);
     try {
         const document = await School.create({
@@ -14,6 +14,7 @@ exports.create = async (req, res, next) => {
             email: email,
             logan: logan,
             information: information,
+            fb: fb
 
         });
         console.log(document);
@@ -34,7 +35,7 @@ exports.find = async (req, res, next) => {
 };
 
 exports.updated = async (req, res, next) => {
-    const { name, address, phone, TaxId, clientId, secretId, email, logan, information } = req.body; console.log("Update School", req.body);
+    const { name, address, phone, TaxId, clientId, secretId, email, logan, information, fb } = req.body; console.log("Update School", req.body);
     try {
         const document = await School.update(
             {
@@ -47,6 +48,7 @@ exports.updated = async (req, res, next) => {
                 email: email,
                 logan: logan,
                 information: information,
+                fb: fb
             },
             {
                 where: {

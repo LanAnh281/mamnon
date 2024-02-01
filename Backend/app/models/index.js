@@ -129,6 +129,9 @@ const School = sequelize.define("School", {
   },
   information: {
     type: DataTypes.TEXT
+  },
+  fb: {
+    type: DataTypes.STRING
   }
 
 });
