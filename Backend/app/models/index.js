@@ -188,6 +188,15 @@ const course = sequelize.define("course", {
     type: DataTypes.STRING
   }
 })
+const programs = sequelize.define("programs", {
+  _id: setPrimary,
+  name: {
+    type: DataTypes.STRING,
+  },
+  content: {
+    type: DataTypes.TEXT,
+  }
+})
 const classRoom = sequelize.define("classRoom", {
   _id: setPrimary,
   name: {
@@ -218,6 +227,50 @@ const certification = sequelize.define("certification", {
     type: DataTypes.STRING,
   },
   imageAfter: {
+    type: DataTypes.STRING
+  }
+})
+const Fee = sequelize.define("Fee", {
+  _id: setPrimary,
+  money: {
+    type: DataTypes.STRING
+  }
+})
+const Bill = sequelize.define("Bill", {
+  _id: setPrimary,
+  date: {
+    type: DataTypes.DATE
+  },
+  money: { type: DataTypes.STRING },
+  content: {
+    type: DataTypes.TEXT
+  }
+})
+const children = sequelize.define("children", {
+  _id: setPrimary,
+  birthday: {
+    type: DataTypes.DATE
+  },
+  gender: {
+    type: DataTypes.BOOLEAN
+  },
+  oldBMI: {
+    type: DataTypes.STRING,
+  },
+  newMBI: {
+    type: DataTypes.STRING
+  },
+  active: {
+    type: DataTypes.BOOLEAN
+  }
+
+})
+const receipt = sequelize.define("receipt", {
+  _id: setPrimary,
+  date: {
+    type: DataTypes.DATE
+  },
+  money: {
     type: DataTypes.STRING
   }
 })
@@ -299,6 +352,92 @@ certification.belongsTo(Users, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 })
+
+// kết nối giứa loại lớp và chương trình học
+grade.hasMany(programs, {
+  foreignKey: "gradeId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+programs.belongsTo(grade, {
+  foreignKey: "gradeId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+course.hasMany(programs, {
+  foreignKey: "courseId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+programs.belongsTo(course, {
+  foreignKey: "courseId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+course.hasMany(Fee, {
+  foreignKey: "courseId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+Fee.belongsTo(course, {
+  foreignKey: "courseId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+grade.hasMany(Fee, {
+  foreignKey: "gradeId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+grade.belongsTo(Fee, {
+  foreignKey: "gradeId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+
+//
+classRoom.hasMany(children, {
+  foreignKey: "classRoomId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+children.belongsTo(classRoom, {
+  foreignKey: "classRoomId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+
+children.hasMany(Bill, {
+  foreignKey: "childrenId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+Bill.belongsTo(children, {
+  foreignKey: "childrenId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+Users.hasMany(children, {
+  foreignKey: "userId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+children.belongsTo(Users, {
+  foreignKey: "userId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+
+Bill.hasMany(receipt, {
+  foreignKey: "billId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+receipt.belongsTo(Bill, {
+  foreignKey: "billId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
 // Sync the model with the database
 Roles.sync();
 Permissions.sync();
@@ -316,6 +455,11 @@ course.sync();
 classRoom.sync();
 BMI.sync();
 certification.sync();
+programs.sync();
+Fee.sync();
+Bill.sync();
+children.sync();
+receipt.sync();
 module.exports = {
   Roles,
   Permissions,
@@ -332,5 +476,10 @@ module.exports = {
   course,
   classRoom,
   BMI,
-  certification
+  certification,
+  programs,
+  Fee,
+  Bill,
+  children,
+  receipt
 };
