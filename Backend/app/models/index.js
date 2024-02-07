@@ -87,8 +87,10 @@ const Users = sequelize.define("Users", {
   },
   image: {
     type: DataTypes.TEXT
+  },
+  positionName: {
+    type: DataTypes.STRING
   }
-
 });
 
 const Categories = sequelize.define("Categories", {
