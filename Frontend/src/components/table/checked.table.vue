@@ -1,5 +1,5 @@
 <script>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 export default {
     components: {},
     props: {
@@ -13,8 +13,20 @@ export default {
 
     },
     setup(props, emit) {
-        const data = reactive({ checkedList: [] });
-        return { data };
+
+        onMounted(async () => {
+            try {
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
+        })
+        return {};
     },
 };
 </script>
@@ -24,9 +36,9 @@ export default {
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">#</th>
-                    <!-- <th scope="col">
+                    <th scope="col">
                         <input type="checkbox" name="checkAll" id="checkAll">
-                    </th> -->
+                    </th>
                     <th scope="col" v-for="(filed, index) in fields" :key="index">
                         {{ filed }}
                     </th>
@@ -35,10 +47,10 @@ export default {
             </thead>
             <tbody>
                 <tr v-for="(value, index) in data" :key="index">
-                    <!-- <td>
-                        <input type="checkbox" v-model="data.checkedList">
-                    </td> -->
-                    <td v-for="(title, index1) in titles" :key="index1" style="">
+                    <td>
+                        <input type="checkbox" v-model="data.checkedList" :checked="value.checked == true">
+                    </td>
+                    <td v-for="(title, index1) in titles" :key="index1">
                         {{ value[title] }}
                     </td>
                     <td v-if="action" class="ml-2">

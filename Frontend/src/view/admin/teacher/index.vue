@@ -12,11 +12,11 @@ export default {
         const data = reactive({
             items: [
                 {
-                    name: "a", phone: "a", email: "a", address: "a"
+                    name: "a", phone: "a", email: "a", address: "a", checked: false,
                 },
                 {
-                    name: "b", phone: "a", email: "a", address: "a"
-                }
+                    name: "b", phone: "a", email: "a", address: "a", checked: true
+                },
             ],
         })
         const update = async () => {
@@ -35,9 +35,35 @@ export default {
                 }
             }
         }
+        const handeleDelete = async () => {
+            try {
+                console.log('delete')
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
+        }
+        const handleEdit = async () => {
+            try {
+                console.log('edit');
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
+        }
         const add = async () => {
             try {
-
+                console.log('add');
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -76,7 +102,9 @@ export default {
         })
         return {
             data,
-            add, update
+            handeleDelete,
+            handleEdit,
+            add
         }
     }
 }
@@ -86,11 +114,17 @@ export default {
         <div class="information">
             <h2>Danh sách giáo viên</h2>
             <p class="mx-auto dash"></p>
-            <div class="float-right mx-3 btn btn-success" @click="update">Lưu</div>
+            <!-- <div class="float-right mx-3 btn btn-success" @click="add" data-toggle="modal" data-target="#teacherModal">+
+            </div>
+            <Add></Add> -->
+            <router-link class="float-right mx-3 btn btn-success" :to="{ name: 'addTeacher' }">+
+            </router-link>
         </div>
         <div>
             <Table :data="data.items" :name="'user'" :fields="['Họ và tên', 'SĐT', 'Email', 'Địa chỉ']"
-                :titles="['name', 'phone', 'email', 'address']" :action="false" :checked="true"></Table>
+                :titles="['name', 'phone', 'email', 'address']" :action="true" :actionList="['edit', 'delete']"
+                :checked="true" @edit="handleEdit" @delete="handeleDelete">
+            </Table>
         </div>
     </div>
 </template>
