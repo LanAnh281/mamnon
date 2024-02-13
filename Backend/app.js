@@ -33,6 +33,7 @@ const gradeRoute = require("./app/route/grade.route");
 const courseRoute = require("./app/route/course.route");
 const classRoomRoute = require("./app/route/classroom.route");
 const programsRoute = require("./app/route/program.route");
+const userRoute = require("./app/route/user.route");
 // API
 app.use("/static", express.static(path.join(__dirname, "static")));
 server.listen(3000, () => {
@@ -70,6 +71,7 @@ app.use("/api/grade", gradeRoute);
 app.use("/api/course", courseRoute);
 app.use("/api/classRoom", classRoomRoute);
 app.use("/api/program", programsRoute);
+app.use("/api/user", userRoute);
 // API
 // check errors
 app.use((req, res, next) => {
