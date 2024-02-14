@@ -1,11 +1,19 @@
 <script>
 import { ref, onMounted, reactive, defineComponent } from "vue";
 import _ from "lodash";
+import axios from "axios";
 // services
 import userService from "../../../service/user.service";
+//component
+import Select from "../../../components/select/dependent.select.vue";
 export default {
+    components: { Select },
     setup() {
-        const data = reactive({ item: { email: "" }, uploadFiles: [], files: [], uploadAvatar: [], fileAvatar: [] })
+        const data = reactive({
+            item: { name: "", birthday: "", gender: "", email: "", phone: "", address: "", positionName: "Giáo viên", identification: "" },
+            uploadFiles: [], files: [], uploadAvatar: [], fileAvatar: [],
+            city: []
+        })
         const uploadInput = document.getElementById('imageUpload');
         // uploadInput.addEventListener('click', function () { console.log('up'); })
         const uploadFile = async () => {
@@ -70,12 +78,11 @@ export default {
                 _.forEach(data.uploadFiles, (file) => {
                     formData.append("files", file);
                 });
-                formData.append('email', data.item['email']);
+                _.forEach(formFields, (field) => {
+                    formData.append(field, data.item[field]);
+                });
                 const document = await userService.create(formData);
                 console.log("DOC:", document)
-                // _.forEach(formFields, (field) => {
-                //     formData.append(field, data.item[field]);
-                // });
             } catch (error) {
                 console.log("E:", error)
             }
@@ -286,68 +293,129 @@ export default {
                 reader.readAsDataURL(file);
             }
         };
-        onMounted(() => {
-            const uploadInput = document.getElementById('imageUpload');
-            uploadInput.addEventListener('click', function () { console.log('up'); uploadFile(); })
-            // console.log('hi', uploadInput);
+        const changeCity = async () => {
+            try {
+
+            } catch (error) {
+
+            }
+        }
+        onMounted(async () => {
+            try {
+                data.city = await axios
+                    .get(`https://vn-public-apis.fpo.vn/provinces/getAll?limit=-1'`, {})
+            } catch (error) {
+
+            }
         })
         return {
             data,
             uploadFile,
             handleFileUpload,
             handleFileUploadAvatar,
+            changeCity,
             save
         }
     }
 }
 </script>
 <template>
-    <div class="body">
-        <div class="border rouned-circle">
-            <img src="../../../assets/image/background.jpg" id="imageUpload" width="50px">
-        </div>
-        <form class="px-3" @submit.prevent="save" enctype="multipart/form-data" method="post">
-            <h2 class="text-center">Thông tin giáo viên</h2>
+    <div class="body p-3">
 
-            <!-- Image cccd-->
-            <div class="form-group row">
-                <label for="inputImage" class="col-sm-3 col-form-label p-0">Ảnh CCCD :</label>
-                <div class="col-sm-9">
-                    <input type="file" multiple @change="handleFileUpload($event)" class="form-control" id="inputImage" />
+        <form class="px-3 row" @submit.prevent="save" enctype="multipart/form-data" method="post">
+            <h2 class="text-center col-11">Thông tin giáo viên</h2>
+            <button type="submit" class="btn btn-success mt-3">Thêm </button>
+
+            <div class="col-6">
+                <!-- Name -->
+                <div class="form-group">
+                    <label for="exampleInputName">Họ và tên: </label>
+                    <input type="text" class="form-control" id="exampleInputName" v-model="data.item.name">
+                </div>
+                <!-- Birthday -->
+                <div class="form-group">
+                    <label for="exampleInputBirthday">Ngày sinh: </label>
+                    <input type="date" class="form-control" id="exampleInputBirthday" v-model="data.item.birthday">
+                </div>
+                <!-- gender -->
+                <div class="form-group">
+                    <label for="exampleInputGender">Giới tính: </label>
+                    <input type="radio" class="ml-3" id="exampleInputGender" name="gender" value="0"
+                        v-model="data.item.gender">Nam
+                    <input type="radio" class="ml-3" id="exampleInputGender" name="gender" value="1"
+                        v-model="data.item.gender">Nữ
+                </div>
+                <!-- identification -->
+                <div class="form-group">
+                    <label for="exampleInputIdentification">Số CCCD: </label>
+                    <input type="text" class="form-control" id="exampleInputIdentification"
+                        v-model="data.item.identification">
+                </div>
+            </div>
+            <div class="col-6">
+
+                <!-- address -->
+                <!-- city -->
+                <div class="form-group">
+                    <label for="exampleInputCity">Thành phố: </label>
+
+                    <Select :title="`Chọn thành phố`" :data="data.city.data" @choose="(value) => changeCity(value)">
+
+                    </Select>
+                </div>
+                <!-- district -->
+                <!-- town -->
+                <!-- number address -->
+                <div class="form-group">
+                    <label for="exampleInputAddress">Số nhà: </label>
+                    <input type="text" name="" id="exampleInputAddress" class="form-control" v-model="data.item.address">
+                </div>
+                <!-- email -->
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        v-model="data.item.email">
 
                 </div>
+                <!-- phone -->
+                <div class="form-group">
+                    <label for="exampleInputPhone">SĐT: </label>
+                    <input type="tel" class="form-control" id="exampleInputPhone" v-model="data.item.phone">
+                </div>
+            </div>
+
+
+            <!-- Vai trò
+            <div class="form-group">
+                <label for="exampleInputBirthday">Vai trò: </label>
+                <input type="radio" class="form-control" id="exampleInputGender" name="positionName" value="giáo viên">Giáo
+                viên
+                <input type="radio" class="form-control" id="exampleInputGender" name="positionName" value="phụ huynh">Phụ
+                huynh
+            </div> -->
+
+            <!-- IMG -->
+            <!-- Image cccd-->
+            <div class="form-group  col-12">
+                <label for="inputImage">Ảnh CCCD: </label>
+
+                <input type="file" multiple @change="handleFileUpload($event)" class="form-control" id="inputImage" />
+
+
                 <div id="previewImages" class="container mt-2"></div>
             </div>
             <!-- Ảnh avartar -->
-            <div class="form-group row">
-                <label for="inputImage" class="col-sm-3 col-form-label p-0">Ảnh CCCD :</label>
-                <div class="col-sm-9">
-                    <input type="file" multiple @change="handleFileUploadAvatar($event)" class="form-control" />
-
-                </div>
+            <div class="form-group  col-12">
+                <label for="inputImage">Ảnh chân dung: </label>
+                <input type="file" multiple @change="handleFileUploadAvatar($event)" class="form-control" />
                 <div id="previewImageAvatar" class="container mt-2"></div>
             </div>
-
-            <!-- <div class="form-group">
-                <label for="exampleInputEmail1">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                    v-model="data.item.email">
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email
-                    with anyone else.</small>
-            </div> -->
-            <!-- <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1">
+            <!-- Ảnh bằng cấp -->
+            <div class="form-group  col-12">
+                <label for="inputImage">Ảnh chứng chỉ: </label>
+                <input type="file" multiple @change="handleFileUploadAvatar($event)" class="form-control" />
+                <div id="previewImageAvatar" class="container mt-2"></div>
             </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">Check me out</label>
-            </div>
-            <div class="form-group">
-                <label for="exampleFormControlFile1">Example file input</label>
-                <input type="file" class="form-control-file" id="exampleFormControlFile1">
-            </div> -->
-            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
 </template>
