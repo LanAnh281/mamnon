@@ -1,5 +1,8 @@
 const { Users } = require("../models/index");
-const ApiError = require("../api-error")
+const ApiError = require("../api-error");
+const fs = require("fs");
+const path = require("path");
+const uploadDir = "./uploads/images";
 exports.create = async (req, res, next) => {
     const { name, birthday, gender, identification, address, email, phone, positionName } = req.body;
     console.log("user Body:", req.body);
@@ -27,20 +30,21 @@ exports.create = async (req, res, next) => {
             newestFiles = files.slice(0, 3);
             console.log("new files:", newestFiles);
         })
-        // const document = await classRoom.create({
-        //     name: name,
-        //     birthday: birthday,
-        //     gender: gender,
-        //     identification: identification,
-        //     address: address,
-        //     email: email,
-        //     phone: phone,
-        //     imagePrevious: imagePrevious,
-        //     imageAfter: imageAfter,
-        //     image: image, positionName: positionName
-        // });
-        // console.log(document);
-        return res.json({ message: 'abc', status: "success" });
+        const document = await Users.create({
+            name: name,
+            birthday: birthday,
+            gender: gender,
+            identification: identification,
+            address: address,
+            email: email,
+            phone: phone,
+            imagePrevious: files[0].originalname,
+            imageAfter: files[1].originalname,
+            image: avatar[0].originalname,
+            positionName: positionName
+        });
+        console.log("BAC:", document);
+        return res.json({ message: document, status: "success" });
     } catch (error) {
         console.log(error);
         return next(new ApiError(500, 'An error occurred while creating the role'))
