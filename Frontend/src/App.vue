@@ -64,4 +64,14 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style>
+@media print {
+
+  .sidebar,
+  /* Thay .navbar bằng lớp hoặc id của navbar của bạn */
+  .footer {
+    /* Thay .footer bằng lớp hoặc id của footer của bạn */
+    display: none;
+  }
+}
+</style>

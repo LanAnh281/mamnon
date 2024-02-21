@@ -32,13 +32,16 @@ export default {
     <div id="carouselExampleFade" class="carousel slide carousel-fade " data-ride="carousel">
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img src="../../assets/image/background.jpg" class="d-block w-100" alt="...">
+          <img src="../../assets/image/241753796_100611019042258_5317607245526488899_n.jpg" class="d-block w-100"
+            alt="...">
         </div>
         <div class="carousel-item">
-          <img src="../../assets/image/index.jpg" class="d-block w-100" alt="...">
+          <img src="../../assets/image/292301365_175871391516220_3922383153984952461_n.jpg" class="d-block w-100"
+            alt="...">
         </div>
         <div class="carousel-item">
-          <img src="../../assets/image/index.jpg" class="d-block w-100" alt="...">
+          <img src="../../assets/image/292542366_162806212927398_6084405115164366378_n.jpg" class="d-block w-100"
+            alt="...">
         </div>
       </div>
       <button class="carousel-control-prev" type="button" data-target="#carouselExampleFade" data-slide="prev">
@@ -170,5 +173,4 @@ export default {
   text-align: center;
   color: #3c6ef5;
 
-}
-</style>
+}</style>

@@ -31,6 +31,13 @@ const routes = [
     path: "/admin/addTeacher",
     name: "addTeacher",
     component: () => import("../view/admin/teacher/addTeacher.vue"),
+
+
+  },
+  {
+    path: "/admin/print",
+    name: "printAccount",
+    component: () => import("../view/admin/teacher/printAccount.vue"),
   },
   //User
 

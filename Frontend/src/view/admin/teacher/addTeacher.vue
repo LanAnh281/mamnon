@@ -2,6 +2,7 @@
 import { ref, onMounted, reactive, defineComponent } from "vue";
 import _ from "lodash";
 import axios from "axios";
+import { useRoute, useRouter } from "vue-router"
 // services
 import userService from "../../../service/user.service";
 //component
@@ -9,8 +10,10 @@ import Select from "../../../components/select/dependent.select.vue";
 export default {
     components: { Select },
     setup() {
+        const router = useRouter();
+        const route = useRoute();
         const data = reactive({
-            item: { name: "", birthday: "", gender: "", email: "", phone: "", address: "", positionName: "Giáo viên", identification: "" },
+            item: { name: "", birthday: "", gender: "", email: "", phone: "", address: "", positionName: "giáo viên", identification: "", nameCertification: "" },
             uploadFiles: [], files: [], uploadAvatar: [], fileAvatar: [],
             city: []
         })
@@ -60,9 +63,14 @@ export default {
             'address',
             'email',
             'phone',
-            'positionName'
+            'positionName', 'nameCertification'
         ]
         const save = async () => {
+            // router.push({
+            //     name: "printAccount", params: {
+            //         dataToPrint: document // Thay yourData bằng dữ liệu cần truyền
+            //     }
+            // });            
             try {
                 const formData = new FormData();
                 // avatar
@@ -82,7 +90,15 @@ export default {
                     formData.append(field, data.item[field]);
                 });
                 const document = await userService.create(formData);
-                console.log("DOC:", document)
+                console.log("DOC:", document, document.message['password'])
+                if (document['status'] == 'success') {
+                    // window.location.href = 'printAccount';
+                    router.push({
+                        name: "printAccount", params: {
+                            dataToPrint: document.message, password: document.message['password'] // Thay yourData bằng dữ liệu cần truyền
+                        }
+                    });
+                }
             } catch (error) {
                 console.log("E:", error)
             }
@@ -293,17 +309,9 @@ export default {
                 reader.readAsDataURL(file);
             }
         };
-        const changeCity = async () => {
-            try {
 
-            } catch (error) {
-
-            }
-        }
         onMounted(async () => {
             try {
-                data.city = await axios
-                    .get(`https://vn-public-apis.fpo.vn/provinces/getAll?limit=-1'`, {})
             } catch (error) {
 
             }
@@ -313,7 +321,6 @@ export default {
             uploadFile,
             handleFileUpload,
             handleFileUploadAvatar,
-            changeCity,
             save
         }
     }
@@ -353,29 +360,17 @@ export default {
                 </div>
             </div>
             <div class="col-6">
-
                 <!-- address -->
-                <!-- city -->
                 <div class="form-group">
-                    <label for="exampleInputCity">Thành phố: </label>
-
-                    <Select :title="`Chọn thành phố`" :data="data.city.data" @choose="(value) => changeCity(value)">
-
-                    </Select>
-                </div>
-                <!-- district -->
-                <!-- town -->
-                <!-- number address -->
-                <div class="form-group">
-                    <label for="exampleInputAddress">Số nhà: </label>
-                    <input type="text" name="" id="exampleInputAddress" class="form-control" v-model="data.item.address">
+                    <label for="exampleInputAddress">Địa chỉ: </label>
+                    <textarea name="" cols="10" rows="3" id="exampleInputAddress" class="form-control"
+                        v-model="data.item.address"></textarea>
                 </div>
                 <!-- email -->
                 <div class="form-group">
                     <label for="exampleInputEmail1">Email</label>
                     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                         v-model="data.item.email">
-
                 </div>
                 <!-- phone -->
                 <div class="form-group">
@@ -410,11 +405,15 @@ export default {
                 <input type="file" multiple @change="handleFileUploadAvatar($event)" class="form-control" />
                 <div id="previewImageAvatar" class="container mt-2"></div>
             </div>
-            <!-- Ảnh bằng cấp -->
+            <!-- Ảnh bằng cấp
             <div class="form-group  col-12">
                 <label for="inputImage">Ảnh chứng chỉ: </label>
                 <input type="file" multiple @change="handleFileUploadAvatar($event)" class="form-control" />
                 <div id="previewImageAvatar" class="container mt-2"></div>
+            </div> -->
+            <div class="form-group  col-12">
+                <label for="name">Chứng chỉ: </label>
+                <input type="text" class="form-control" v-model="data.item.nameCertification" />
             </div>
         </form>
     </div>
