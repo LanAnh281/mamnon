@@ -222,6 +222,9 @@ const BMI = sequelize.define("BMI", {
 })
 const certification = sequelize.define("certification", {
   _id: setPrimary,
+  name: {
+    type: DataTypes.STRING
+  },
   issuedate: {
     type: DataTypes.DATE,
   },
