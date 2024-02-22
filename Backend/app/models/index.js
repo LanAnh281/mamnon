@@ -292,11 +292,11 @@ Permissions.belongsToMany(Roles, {
   onUpdate: "CASCADE",
 });
 // one-to-many relationship
-Permissions.hasMany(Accounts, {
-  foreignKey: "permisionId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
+// Permissions.hasMany(Accounts, {
+//   foreignKey: "permisionId",
+//   onDelete: "CASCADE",
+//   onUpdate: "CASCADE",
+// });
 Accounts.belongsTo(Permissions, {
   foreignKey: "permissionId",
   onDelete: "CASCADE",

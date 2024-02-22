@@ -15,4 +15,5 @@ router.route("/:id")
     .get(user.findOne)
     .put(user.updated)
     .delete(user.delete);
+router.route("/getImg/:id").get(user.getImg);
 module.exports = router;

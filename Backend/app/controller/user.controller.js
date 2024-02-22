@@ -17,7 +17,6 @@ const setPassword = () => {
 };
 exports.create = async (req, res, next) => {
     const { name, birthday, gender, identification, address, email, phone, positionName, nameCertification } = req.body;
-    console.log("user Body:", req.body);
     const { avatar, files } = req.files;
     console.log("File:", req.files)
     console.log("IMG:", avatar[0].filename, files[0].filename, files[1].filename);
@@ -84,7 +83,7 @@ exports.create = async (req, res, next) => {
 };
 exports.findAll = async (req, res, next) => {
     try {
-        const documents = await classRoom.findAll({});
+        const documents = await Users.findAll({});
         return res.json({ message: documents, status: "success" });
     } catch (error) {
         console.log(error);
@@ -94,10 +93,13 @@ exports.findAll = async (req, res, next) => {
 exports.findOne = async (req, res, next) => {
     try {
         console.log(req.params.id);
-        const document = await classRoom.findOne({
+        const document = await Users.findOne({
             where: {
                 _id: req.params.id,
             },
+            include: {
+                model: certification
+            }
         });
         return res.json({ message: document, status: "success" });
     } catch (error) {
@@ -106,14 +108,24 @@ exports.findOne = async (req, res, next) => {
     }
 };
 exports.updated = async (req, res, next) => {
-    const { name, gradeId, courseId } = req.body;
-    console.log("Update classRoom", req.body);
+    const { name, birthday, gender, identification, address, email, phone, positionName, nameCertification } = req.body;
+    const { avatar, files } = req.files;
+    console.log("File:", req.files)
+    console.log("IMG:", avatar[0].filename, files[0].filename, files[1].filename);
     try {
-        const document = await classRoom.update(
+        const document = await Users.update(
             {
                 name: name,
-                gradeId: gradeId,
-                courseId: courseId
+                birthday: birthday,
+                gender: gender,
+                identification: identification,
+                address: address,
+                email: email,
+                phone: phone,
+                imagePrevious: files[0].originalname,
+                imageAfter: files[1].originalname,
+                image: avatar[0].originalname,
+                positionName: positionName
             },
             {
                 where: {
@@ -129,7 +141,7 @@ exports.updated = async (req, res, next) => {
 };
 exports.delete = async (req, res, next) => {
     try {
-        const document = await classRoom.destroy({
+        const document = await Users.destroy({
             where: {
                 _id: req.params.id,
             },
@@ -139,5 +151,17 @@ exports.delete = async (req, res, next) => {
         console.log(error);
         return next(new ApiError(500, 'An error occurred while deleting the role'))
     }
+};
+
+// get image
+exports.getImg = async function (req, res) {
+    const imagePath = path.join(
+        __dirname,
+        "..",
+        "..",
+        "/uploads/images",
+        `${req.params.id}`
+    );
+    res.sendFile(imagePath);
 };
 

@@ -31,10 +31,20 @@ const storage = multer.diskStorage({
 });
 const storageStatic = multer.diskStorage({
     destination: "./static/images",
+    // filename: (req, file, cb) => {
+    //     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    //     const fileExtension = path.extname(file.originalname);
+    //     cb(null, file.fieldname + "-" + uniqueSuffix + fileExtension);
+    // },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        const fileExtension = path.extname(file.originalname);
-        cb(null, file.fieldname + "-" + uniqueSuffix + fileExtension);
+        // const fileExtension = path.extname(file.originalname);
+        console.log("Name1:", file.fieldname);
+        cb(null, file.originalname
+            // + "-"
+            // + uniqueSuffix
+            // + fileExtension
+        );
     },
 });
 const MAX_SIZE = 100000000; //100mb
