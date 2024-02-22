@@ -112,12 +112,17 @@ h5 {
     opacity: .6;
 }
 
+.info-icon,
 .delete-icon,
 .edit-icon {
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 4px;
     margin-right: 4px;
+}
+
+.info-icon {
+    color: blue;
 }
 
 .delete-icon {

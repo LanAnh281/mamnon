@@ -2,6 +2,10 @@
 import { reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 //service
+import Login from "../../service/login.service";
+//js
+import { warning } from "../../assets/js/alert.common";
+import { setCookie, setLocalStrorage } from "../../assets/js/common.login"
 export default {
   components: {},
   setup() {
@@ -22,14 +26,36 @@ export default {
 
     const login = async () => {
       try {
-        //   const document = await Login.login(data.item);
-        // console.log(`document:`, document._id);
+        const document = await Login.login(data.item);
+        console.log(`document:`, document);
+        if (document['status'] == 'success') {
+          setLocalStrorage(
+            document["token"],
+            document["permissionName"],
+            // document["userName"],
+            document["expiresIn"]
+          );
+
+          setCookie("token", document.token, 10); //1 ngày
+          setCookie("permission", document.permissionName, 10);
+          if (document.permissionName == 'giáo viên') {
+            router.push({ name: "school" });
+          }
+          else
+            router.push({ name: "homepage" });
+        }
+        else {
+          console.log('dn sai');
+          warning('Thông tin sai', 'Tên đăng nhập hoặc mật khẩu sai');
+        }
+
         // setCookie("token", document.token, 10); //1 ngày
         // setCookie("role", document.role, 10);
         // if (document.role == "admin") {
         // router.push({ name: "school" });
         // } else 
-        router.push({ name: "homepage" });
+
+
       } catch (error) {
         if (error.response) {
           console.log("Server-side errors", error.response.data);
@@ -62,12 +88,12 @@ export default {
         <form @submit.prevent="login" class="container mt-3">
           <div class="form-group row">
             <label for="inputUserName" class="col-3 ">SĐT:</label>
-            <input type="text" class="form-control col-9" id="inputUserName" />
+            <input type="text" class="form-control col-9" id="inputUserName" v-model="data.item.userName" />
 
           </div>
           <div class="form-group row">
             <label for="inputPassword" class="col-3">Mật khẩu :</label>
-            <input type="password" id="inputPassword" class="form-control col-9 ">
+            <input type="password" id="inputPassword" class="form-control col-9" v-model="data.item.password">
           </div>
           <div class="row justify-content-around">
             <button type="submit" class="btn btn-login ">

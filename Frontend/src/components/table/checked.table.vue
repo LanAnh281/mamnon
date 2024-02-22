@@ -35,7 +35,7 @@ export default {
         <table class="table">
             <thead class="thead-dark">
                 <tr>
-                    <th scope="col">#</th>
+
                     <th scope="col">
                         <input type="checkbox" name="checkAll" id="checkAll">
                     </th>

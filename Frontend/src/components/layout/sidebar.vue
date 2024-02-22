@@ -46,7 +46,6 @@ export default {
       localStorage.removeItem("position");
       localStorage.setItem("username", '');
       router.push({ name: 'homepage' })
-
     };
     watch(
       () => route.fullPath,
