@@ -19,6 +19,7 @@ app.use(bodyParser.json());
 const http = require("http");
 const server = http.createServer(app);
 //route
+const accountRouter = require("./app/route/account.route");
 const roleRouter = require("./app/route/role.route");
 const permissionRouter = require("./app/route/permission.route");
 const rolePermissionRouter = require("./app/route/rolePermission.route");
@@ -60,6 +61,7 @@ const convertToLowercase = (req, res, next) => {
 
 app.use(convertToLowercase);
 //router
+app.use("/api/accounts", accountRouter);
 app.use("/api/role", roleRouter);
 app.use("/api/permission", permissionRouter);
 app.use("/api/rolePermission", rolePermissionRouter);
@@ -70,7 +72,7 @@ app.use("/api/foodList", foodListRoute);
 app.use("/api/menuDaily", menuDailyRoute);
 app.use("/api/grade", gradeRoute);
 app.use("/api/course", courseRoute);
-app.use("/api/classRoom", classRoomRoute);
+app.use("/api/class", classRoomRoute);
 app.use("/api/program", programsRoute);
 app.use("/api/user", userRoute);
 app.use("/api/login", loginRoute);

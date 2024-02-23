@@ -40,8 +40,7 @@ exports.login = async (req, res, next) => {
             return res.json({ message: "fail", status: "fail" });
         }
         if (document["isActive"]) {
-            console.log('d:', document);
-            const position = await Permissions.findOne({
+            const permission = await Permissions.findOne({
                 where: { _id: document["permissionId"] },
             });
 
@@ -79,7 +78,7 @@ exports.login = async (req, res, next) => {
                 {
                     _id: document["_id"],
                     userId: document["userId"],
-                    position: position,
+                    permission: permission,
                     exp: expiryTime.unix(),
                 },
                 secret,
@@ -88,7 +87,7 @@ exports.login = async (req, res, next) => {
                         message: "success",
                         status: "success",
                         token: data,
-                        permissionName: position["name"],
+                        permissionName: permission["name"],
                         userName: documentUser["userName"],
                         expiresIn: expiryTime,
                     });

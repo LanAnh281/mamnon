@@ -253,6 +253,9 @@ const Bill = sequelize.define("Bill", {
 })
 const children = sequelize.define("children", {
   _id: setPrimary,
+  name: {
+    type: DataTypes.STRING
+  },
   birthday: {
     type: DataTypes.DATE
   },
@@ -394,11 +397,11 @@ grade.hasMany(Fee, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 })
-grade.belongsTo(Fee, {
-  foreignKey: "gradeId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-})
+// grade.belongsTo(Fee, {
+//   foreignKey: "gradeId",
+//   onDelete: "CASCADE",
+//   onUpdate: "CASCADE",
+// })
 
 //
 classRoom.hasMany(children, {

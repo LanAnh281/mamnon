@@ -1,7 +1,7 @@
 const { Accounts } = require("../models/index");
 const ApiError = require("../api-error")
 const { setPassword } = require("../middleware/password.middleware");
-const { createUserAndAccount } = require("../models/transaction");
+// const { createUserAndAccount } = require("../models/transaction");
 exports.create = async (req, res, next) => {
     const { name } = req.body;
     try {
@@ -71,21 +71,36 @@ exports.findOne = async (req, res, next) => {
     }
 };
 exports.updated = async (req, res, next) => {
-    const { name } = req.body;
+    const _id = req.user._id;
+    console.log(">>req.data:", req.user._id);
+    let { userName, passwordOld, password, userId, positionId, isActive } =
+        req.body;
+    console.log(">>>body:", req.body);
     try {
-        const document = await Accounts.update(
-            {
-                name: name,
-            },
-            {
-                where: {
-                    _id: req.params.id,
+        const account = await Accounts.findOne({ where: { _id: _id } });
+        if (account && account["password"] === passwordOld) {
+            password = password;
+            const document = await Accounts.update(
+                {
+                    userName: userName,
+                    password: password,
+                    isActive: isActive,
+                    userId: userId,
+                    positionId: positionId,
                 },
-            }
-        );
-        return res.json({ message: document, status: "success" });
+                {
+                    where: {
+                        _id: _id,
+                    },
+                }
+            );
+            res.json({ message: document, status: "success" });
+        } else {
+            res.json({ message: "fail", status: "fail" });
+        }
     } catch (error) {
-        return next(new ApiError(500, 'An error occurred while updating the role'))
+        console.log(error);
+        res.status(500).json({ message: error, status: "faild" });
     }
 };
 exports.delete = async (req, res, next) => {

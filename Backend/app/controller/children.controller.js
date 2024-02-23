@@ -1,11 +1,11 @@
-const { Roles } = require("../models/index");
+const { children } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
-    const { name } = req.body;
-    console.log("Roles Body:", req.body);
+    const { name, birthday, gender, classRoomId, userId } = req.body;
+    console.log("children Body:", req.body);
     try {
-        const document = await Roles.create({
-            name: name,
+        const document = await children.create({
+            name: name, birthday: birthday, gender: gender, classRoomId: classRoomId, userId: userId
         });
         console.log(document);
         return res.json({ message: document, status: "success" });
@@ -16,7 +16,7 @@ exports.create = async (req, res, next) => {
 };
 exports.findAll = async (req, res, next) => {
     try {
-        const documents = await Roles.findAll({});
+        const documents = await children.findAll({});
         return res.json({ message: documents, status: "success" });
     } catch (error) {
         console.log(error);
@@ -26,7 +26,7 @@ exports.findAll = async (req, res, next) => {
 exports.findOne = async (req, res, next) => {
     try {
         console.log(req.params.id);
-        const document = await Roles.findOne({
+        const document = await children.findOne({
             where: {
                 _id: req.params.id,
             },
@@ -39,9 +39,9 @@ exports.findOne = async (req, res, next) => {
 };
 exports.updated = async (req, res, next) => {
     const { name } = req.body;
-    console.log("Update Roles", req.body);
+    console.log("Update children", req.body);
     try {
-        const document = await Roles.update(
+        const document = await children.update(
             {
                 name: name,
             },
@@ -59,7 +59,7 @@ exports.updated = async (req, res, next) => {
 };
 exports.delete = async (req, res, next) => {
     try {
-        const document = await Roles.destroy({
+        const document = await children.destroy({
             where: {
                 _id: req.params.id,
             },
@@ -72,7 +72,7 @@ exports.delete = async (req, res, next) => {
 };
 exports.deleteAll = async (req, res, next) => {
     try {
-        const documents = await Roles.destroy({
+        const documents = await children.destroy({
             where: {}
         });
         return res.json({ message: documents, status: "success" });

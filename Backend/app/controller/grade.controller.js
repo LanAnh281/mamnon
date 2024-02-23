@@ -1,4 +1,4 @@
-const { grade } = require("../models/index");
+const { grade, classRoom } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
     const { name, description } = req.body;
@@ -17,7 +17,11 @@ exports.create = async (req, res, next) => {
 };
 exports.findAll = async (req, res, next) => {
     try {
-        const documents = await grade.findAll({});
+        const documents = await grade.findAll({
+            include: {
+                model: classRoom
+            }
+        });
         return res.json({ message: documents, status: "success" });
     } catch (error) {
         console.log(error);
