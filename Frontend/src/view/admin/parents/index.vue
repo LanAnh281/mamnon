@@ -1,7 +1,5 @@
 <script>
 import { reactive, ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-//service
 import schoolService from "../../../service/school.service";
 import userService from "../../../service/user.service";
 //component
@@ -14,8 +12,6 @@ import { success } from "../../../assets/js/alert.common";
 export default {
     components: { Add, Info, Edit, Table },
     setup() {
-        const router = useRouter();
-        const route = useRoute();
         const data = reactive({
             items: [],
             activeData: '',
@@ -67,7 +63,6 @@ export default {
             try {
                 data.activeData = value;
                 activeEdit.value = !activeEdit.value;
-                router.push({ name: 'editTeacher', query: { _id: data.activeData } });
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -94,14 +89,10 @@ export default {
         const refresh = async () => {
             try {
                 const document = await userService.getAll();
-                data.items = document.message.filter((item) => item.positionName == 'giáo viên');
-                data.items = data.items.map((item) => {
-                    return {
-                        ...item,
-                        checked: false
-                    }
-                }
-                )
+                data.items = document.message.filter((item) => {
+                    return item.positionName == 'phụ huynh';
+                });
+
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -125,7 +116,6 @@ export default {
                 }
             }
         })
-
         return {
             data,
             activeInfo,
@@ -135,7 +125,7 @@ export default {
             handleInfo,
             handeleDelete,
             handleEdit,
-            add,
+            add
         }
     }
 }
@@ -143,9 +133,9 @@ export default {
 <template>
     <div class="body p-3">
         <div class="information">
-            <h2>Danh sách giáo viên</h2>
+            <h2>Danh sách phụ huynh</h2>
             <p class="mx-auto dash"></p>
-            <router-link class="float-right mx-3 btn btn-success mb-3" :to="{ name: 'addTeacher' }">+
+            <router-link class="float-right mx-3 btn btn-success mb-3" :to="{ name: 'addParent' }">+
             </router-link>
         </div>
         <div>
@@ -154,9 +144,7 @@ export default {
                 @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
             </Table>
             <Info :_id="data.activeData" v-if="activeInfo"></Info>
-
-
-            <!-- <Edit :_id="data.activeData" v-if="activeEdit"></Edit> -->
+            <Edit :_id="data.activeData" v-if="activeEdit"></Edit>
         </div>
     </div>
 </template>

@@ -5,7 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import Login from "../../service/login.service";
 //js
 import { warning } from "../../assets/js/alert.common";
-import { setCookie, setLocalStrorage } from "../../assets/js/common.login"
+import { setCookie, setLocalStrorage } from "../../assets/js/login.common"
 export default {
   components: {},
   setup() {
@@ -16,14 +16,6 @@ export default {
       },
     });
     const router = useRouter();
-
-    // const setCookie = (cname, cvalue, exdays) => {
-    //   const d = new Date();
-    //   d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
-    //   let expires = "expires=" + d.toUTCString();
-    //   document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    // };
-
     const login = async () => {
       try {
         const document = await Login.login(data.item);
@@ -32,12 +24,10 @@ export default {
           setLocalStrorage(
             document["token"],
             document["permissionName"],
-            // document["userName"],
             document["expiresIn"]
           );
-
-          setCookie("token", document.token, 10); //1 ngày
-          setCookie("permission", document.permissionName, 10);
+          // setCookie("token", document.token, 10); //1 ngày
+          // setCookie("permission", document.permissionName, 10);
           if (document.permissionName == 'giáo viên') {
             router.push({ name: "school" });
           }
@@ -48,14 +38,6 @@ export default {
           console.log('dn sai');
           warning('Thông tin sai', 'Tên đăng nhập hoặc mật khẩu sai');
         }
-
-        // setCookie("token", document.token, 10); //1 ngày
-        // setCookie("role", document.role, 10);
-        // if (document.role == "admin") {
-        // router.push({ name: "school" });
-        // } else 
-
-
       } catch (error) {
         if (error.response) {
           console.log("Server-side errors", error.response.data);

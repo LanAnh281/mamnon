@@ -9,7 +9,7 @@
 
 <script>
 import { useRoute, useRouter } from "vue-router";
-import { clearCookieValue } from "../../assets/js/common.login";
+import { clearCookieValue } from "../../assets/js/login.common";
 import loginService from "../../service/login.service";
 export default {
   components: {},

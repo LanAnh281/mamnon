@@ -1,9 +1,10 @@
 <script>
 import { reactive, ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-//service
 import schoolService from "../../../service/school.service";
 import userService from "../../../service/user.service";
+import classService from "../../../service/class.service";
+import gradeService from "../../../service/grade.service";
+
 //component
 import Add from "./add.vue";
 import Info from "./info.vue";
@@ -14,12 +15,11 @@ import { success } from "../../../assets/js/alert.common";
 export default {
     components: { Add, Info, Edit, Table },
     setup() {
-        const router = useRouter();
-        const route = useRoute();
         const data = reactive({
             items: [],
             activeData: '',
-        })
+        });
+        const activeAdd = ref(false);
         const activeInfo = ref(false);
         const activeEdit = ref(false);
         const activeDelete = ref(false);
@@ -41,8 +41,16 @@ export default {
         }
         const handleInfo = async (value) => {
             try {
-                data.activeData = value;
-                activeInfo.value = !activeDelete.value;
+                data.active = value;
+                activeInfo.value = !activeInfo.value;
+            } catch (error) {
+
+            }
+        }
+        const handleAdd = async (value) => {
+            try {
+                data.active = value;
+                activeAdd.value = !activeAdd.value;
             } catch (error) {
 
             }
@@ -67,7 +75,6 @@ export default {
             try {
                 data.activeData = value;
                 activeEdit.value = !activeEdit.value;
-                router.push({ name: 'editTeacher', query: { _id: data.activeData } });
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -80,7 +87,7 @@ export default {
         }
         const add = async () => {
             try {
-                console.log('add');
+                console.log('add1');
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -93,15 +100,14 @@ export default {
         }
         const refresh = async () => {
             try {
-                const document = await userService.getAll();
-                data.items = document.message.filter((item) => item.positionName == 'giáo viên');
-                data.items = data.items.map((item) => {
+                const document = await gradeService.getAll();
+                data.items = document.message.map((item) => {
                     return {
                         ...item,
-                        checked: false
+                        classNumber: item.classRooms.length
                     }
-                }
-                )
+                });
+
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -125,9 +131,9 @@ export default {
                 }
             }
         })
-
         return {
             data,
+            activeAdd,
             activeInfo,
             activeEdit,
             activeDelete,
@@ -135,7 +141,7 @@ export default {
             handleInfo,
             handeleDelete,
             handleEdit,
-            add,
+            add
         }
     }
 }
@@ -143,20 +149,20 @@ export default {
 <template>
     <div class="body p-3">
         <div class="information">
-            <h2>Danh sách giáo viên</h2>
+            <h2>Danh sách lớp học</h2>
             <p class="mx-auto dash"></p>
-            <router-link class="float-right mx-3 btn btn-success mb-3" :to="{ name: 'addTeacher' }">+
-            </router-link>
+            <!-- <router-link class="float-right mx-3 btn btn-success mb-3" :to="{ name: 'addClass' }">+
+            </router-link> -->
+            <button class="btn btn-success float-right mb-3" @click="handleInfo">+</button>
         </div>
         <div>
-            <Table :data="data.items" :name="'Teacher'" :fields="['Họ và tên', 'SĐT', 'Email']"
-                :titles="['name', 'phone', 'email']" :action="true" :actionList="['info', 'edit', 'delete']" :checked="true"
-                @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
+            <Table :data="data.items" :name="'Class'" :fields="['Tên loại lớp', 'Mô tả', 'Số lớp']" @click="handleInfo"
+                :titles="['name', 'description', 'classNumber']" :action="true" :actionList="['info', 'edit', 'delete']"
+                :checked="true" @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
             </Table>
+            <Add v-if="activeAdd"></Add>
             <Info :_id="data.activeData" v-if="activeInfo"></Info>
-
-
-            <!-- <Edit :_id="data.activeData" v-if="activeEdit"></Edit> -->
+            <Edit :_id="data.activeData" v-if="activeEdit"></Edit>
         </div>
     </div>
 </template>

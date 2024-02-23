@@ -16,7 +16,10 @@ class accountService {
   async get(id) {
     return (await this.api.get(`/${id}`)).data;
   }
-  async update(id, data) {
+  async update(data) {
+    return (await this.api.put(`/`, data)).data;
+  }
+  async updateActive(id, data) {
     return (await this.api.put(`/${id}`, data)).data;
   }
   async delete(id) {
@@ -25,3 +28,5 @@ class accountService {
 }
 
 export default new accountService();
+
+

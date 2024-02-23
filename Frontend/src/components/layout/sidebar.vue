@@ -8,7 +8,7 @@ export default {
     const route = useRoute();
     const data = reactive({
       item: [
-        { name: "Thông báo", icon: "bar_chart_4_bars", active: "dashboard" },
+        { name: "Thông báo", icon: "notifications", active: "notification" },
         { name: "Thống kê", icon: "bar_chart_4_bars", active: "dashboard" },
         {
           name: "Trường học",
@@ -16,7 +16,9 @@ export default {
           active: "school",
         },
         { name: "Giáo viên", icon: "person", active: "teacher" },
-        { name: "Lớp học", icon: "holiday_village", active: "room" },
+        { name: "Phụ huynh", icon: "people", active: "parents" },
+
+        { name: "Lớp học", icon: "holiday_village", active: "class" },
         { name: "Thực đơn", icon: "menu", active: "menuDaily" },
 
         {
@@ -43,15 +45,14 @@ export default {
     const logout = async () => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("expiresIn");
-      localStorage.removeItem("position");
-      localStorage.setItem("username", '');
+      localStorage.removeItem("permissionName");
+      localStorage.setItem("userName", '');
       router.push({ name: 'homepage' })
     };
     watch(
       () => route.fullPath,
       (newPath, oldPath) => {
         data.active = newPath.substring(newPath.lastIndexOf("/") + 1);
-        console.log("Path:", data.active);
       }
     );
 

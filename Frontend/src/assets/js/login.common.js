@@ -1,18 +1,15 @@
 import moment from "moment-timezone";
-
-//service
-//service
 import loginService from "../../service/login.service";
 
-export const setLocalStrorage = (token, permission, expiresIn) => {
+export const setLocalStrorage = (token, permissionName, expiresIn) => {
     localStorage.setItem("accessToken", token);
-    localStorage.setItem("permissionName", permission);
-    // localStorage.setItem("userName", userName);
+    localStorage.setItem("permissionName", permissionName);
+    localStorage.setItem("userName", permissionName);
     localStorage.setItem("expiresIn", expiresIn);
 };
 export const cleanLocalStorage = () => {
     localStorage.removeItem("accessToken");
-    localStorage.removeItem("position");
+    localStorage.removeItem("permissionName");
     localStorage.removeItem("userName");
     localStorage.removeItem("expiresIn");
 };
@@ -29,7 +26,7 @@ export const checkAccessToken = async (router) => {
         console.log("refresh token còn hạn");
         setLocalStrorage(
             document["token"],
-            document["position"],
+            document["permissionName"],
             document["expiresIn"]
         );
     }

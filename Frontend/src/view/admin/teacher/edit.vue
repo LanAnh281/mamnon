@@ -1,123 +1,427 @@
 <script>
-import { reactive, onMounted } from "vue";
-// service
-import userService from "../../../service/user.service";
+import { ref, onMounted, reactive, defineComponent } from "vue";
+import _ from "lodash";
+import axios from "axios";
 //js
 import { formatDateTime } from "../../../assets/js/format.common"
+
+import { useRoute, useRouter } from "vue-router"
+// services
+import userService from "../../../service/user.service";
+//component
+import Select from "../../../components/select/dependent.select.vue";
 export default {
-    props: { _id: String },
-    setup(props, emit) {
-        const data = reactive({ item: {} });
-        const save = async () => {
+    components: { Select },
+    setup() {
+        const router = useRouter();
+        const route = useRoute();
+        const data = reactive({
+            item: { name: "", birthday: "", gender: "", email: "", phone: "", address: "", positionName: "giáo viên", identification: "", nameCertification: "", certifications: [{ name: '' }] },
+            uploadFiles: [], files: [], uploadAvatar: [], fileAvatar: [],
+            city: [],
+            medias: [],
+            uploadFiles: [],
+            files: [],
+            flag: false,
+            boarding: {},
+            removeMedia: [],
+            mediasCopy: [],
+        });
+
+        const uploadInput = document.getElementById('imageUpload');
+        // uploadInput.addEventListener('click', function () { console.log('up'); })
+        const uploadFile = async () => {
             try {
-                const document = await userService.update(props._id, data.item);
-                console.log("up:", document);
+                console.log('up');
+                // const uploadInput = document.getElementById('imageUpload');
+                // uploadFile.addEventListener('click', function () {
+                const uploadInput = document.createElement('input');
+                uploadInput.type = 'file';
+                uploadInput.accept = 'image/*';
+                uploadInput.style.display = 'none'; // Ẩn thẻ input mặc định
+
+                // Lắng nghe sự kiện khi người dùng chọn tệp
+                uploadInput.addEventListener('change', function () {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function () {
+                            // Xử lý hình ảnh ở đây (ví dụ: hiển thị trên trang web)
+                            const uploadedImg = document.createElement('img');
+                            uploadedImg.src = reader.result;
+                            document.body.appendChild(uploadedImg);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // Thêm thẻ input vào body của trang web
+                document.body.appendChild(uploadInput);
+
+                uploadInput.click();
+
+
+
+                // })
             } catch (error) {
-                if (error.response) {
-                    console.log("Server-side errors", error.response.data);
-                } else if (error.request) {
-                    console.log("Client-side errors", error.request);
-                } else {
-                    console.log("Errors:", error.message);
-                }
+
             }
         }
+        const formFields = ['name',
+            'birthday',
+            'gender',
+            'identification',
+            'address',
+            'email',
+            'phone',
+            'positionName', 'nameCertification'
+        ]
+        const save = async () => {
+            try {
+                const formData = new FormData();
+                // avatar
+                data.uploadAvatar.push({ name: "" });
+                console.log("AV", data.uploadAvatar);
+
+                _.forEach(data.uploadAvatar, (file) => {
+                    formData.append("avatar", file);
+
+                });
+                //cccd
+
+                _.forEach(data.uploadFiles, (file) => {
+                    formData.append("files", file);
+                });
+                _.forEach(formFields, (field) => {
+                    formData.append(field, data.item[field]);
+                });
+                const document = await userService.create(formData);
+                console.log("DOC:", document, document.message['password'])
+                if (document['status'] == 'success') {
+                    // window.location.href = 'printAccount';
+                    router.push({
+                        name: "printAccount", params: {
+                            dataToPrint: document.message, password: document.message['password'] // Thay yourData bằng dữ liệu cần truyền
+                        }
+                    });
+                }
+            } catch (error) {
+                console.log("E:", error)
+            }
+        }
+        const handleFileUpload = async (event) => {
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "image/webp",
+            ];
+            const files = event.target.files;
+            data.uploadFiles = [...data.uploadFiles, ...files];
+            data.files = [
+                ...data.files,
+                ..._.map(data.uploadFiles, (file) => ({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                })),
+            ];
+            const previewImages = document.getElementById("previewImages");
+            previewImages.innerHTML = "";
+            const rowImages = document.createElement("div");
+            rowImages.classList.add("row");
+
+            for (const file of data.uploadFiles) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const colImage = document.createElement("div");
+                    colImage.classList.add("col-6", "mt-2");
+                    colImage.style.position = "relative";
+                    colImage.id = file.name;
+                    if (allowedTypes.includes(file.type)) {
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.style.maxWidth = "100%";
+                        img.style.maxHeight = "100%";
+                        img.style.objectFit = "containt";
+                        colImage.append(img);
+                    }
+
+                    const deleteIcon = document.createElement("span");
+                    deleteIcon.textContent = "x";
+                    deleteIcon.style.cssText = `
+                            position:absolute;
+                            top:-16px;
+                            right:10px;
+                            width:24px;
+                            height:24px;
+                            font-weight:400;
+                            font-size:1.2rem;
+                            color:red;
+                            background-color:rgba(240, 227, 227,0.5);
+                            text-align:center;
+                            line-height:1;                 
+                    `;
+                    deleteIcon.classList.add("rounded-circle");
+                    deleteIcon.addEventListener("mouseenter", () => {
+                        deleteIcon.style.cssText = `
+                                position:absolute;
+                                top:-16px;
+                                right:10px;
+                                width:24px;
+                                height:24px;
+                                font-weight:600;
+                                font-size:1.2rem;
+                                color:red;
+                                background-color:rgb(240, 227, 227);
+                                text-align:center;
+                                line-height:1;                 
+                        `;
+                    });
+                    deleteIcon.addEventListener("mouseleave", function () {
+                        deleteIcon.style.cssText = `
+                            position:absolute;
+                            top:-16px;
+                            right:10px;
+                            width:24px;
+                            height:24px;
+                            font-weight:400;
+                            font-size:1.2rem;
+                            color:red;
+                            background-color:rgba(240, 227, 227,0.5);
+                            text-align:center;
+                            line-height:1;                 
+                        `;
+                    });
+                    deleteIcon.addEventListener("click", () => {
+                        data.uploadFiles = data.uploadFiles.filter((item) => item != file);
+                        const colRemove = document.getElementById(file.name);
+                        colRemove.remove();
+                    });
+
+                    const br = document.createElement("br");
+
+                    colImage.append(deleteIcon);
+                    colImage.append(br);
+                    const span = document.createElement("span");
+                    colImage.append(span);
+                    rowImages.append(colImage);
+                    previewImages.append(rowImages);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        };
+        const handleFileUploadAvatar = async (event) => {
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "image/webp",
+            ];
+            const files = event.target.files;
+            data.uploadAvatar = [...data.uploadAvatar, ...files];
+            data.fileAvatar = [
+                ...data.fileAvatar,
+                ..._.map(data.uploadAvatar, (file) => ({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                })),
+            ];
+            const previewImages = document.getElementById("previewImageAvatar");
+            previewImages.innerHTML = "";
+            const rowImages = document.createElement("div");
+            rowImages.classList.add("row");
+
+            for (const file of data.uploadAvatar) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const colImage = document.createElement("div");
+                    colImage.classList.add("col-6", "mt-2");
+                    colImage.style.position = "relative";
+                    colImage.id = file.name;
+                    if (allowedTypes.includes(file.type)) {
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.style.maxWidth = "100%";
+                        img.style.maxHeight = "100%";
+                        img.style.objectFit = "containt";
+                        colImage.append(img);
+                    }
+
+                    const deleteIcon = document.createElement("span");
+                    deleteIcon.textContent = "x";
+                    deleteIcon.style.cssText = `
+                            position:absolute;
+                            top:-16px;
+                            right:10px;
+                            width:24px;
+                            height:24px;
+                            font-weight:400;
+                            font-size:1.2rem;
+                            color:red;
+                            background-color:rgba(240, 227, 227,0.5);
+                            text-align:center;
+                            line-height:1;                 
+                    `;
+                    deleteIcon.classList.add("rounded-circle");
+                    deleteIcon.addEventListener("mouseenter", () => {
+                        deleteIcon.style.cssText = `
+                                position:absolute;
+                                top:-16px;
+                                right:10px;
+                                width:24px;
+                                height:24px;
+                                font-weight:600;
+                                font-size:1.2rem;
+                                color:red;
+                                background-color:rgb(240, 227, 227);
+                                text-align:center;
+                                line-height:1;                 
+                        `;
+                    });
+                    deleteIcon.addEventListener("mouseleave", function () {
+                        deleteIcon.style.cssText = `
+                            position:absolute;
+                            top:-16px;
+                            right:10px;
+                            width:24px;
+                            height:24px;
+                            font-weight:400;
+                            font-size:1.2rem;
+                            color:red;
+                            background-color:rgba(240, 227, 227,0.5);
+                            text-align:center;
+                            line-height:1;                 
+                        `;
+                    });
+                    deleteIcon.addEventListener("click", () => {
+                        data.uploadAvatar = data.uploadAvatar.filter((item) => item != file);
+                        const colRemove = document.getElementById(file.name);
+                        colRemove.remove();
+                    });
+
+                    const br = document.createElement("br");
+
+                    colImage.append(deleteIcon);
+                    colImage.append(br);
+                    const span = document.createElement("span");
+                    colImage.append(span);
+                    rowImages.append(colImage);
+                    previewImages.append(rowImages);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        };
+
         onMounted(async () => {
             try {
-                const document = await userService.get(props._id);
+                const document = await userService.get(route.query['_id']);
                 data.item = document.message;
-                // format date 
-                data.item.birthday = formatDateTime(data.item.birthday);
-                data.item.gender = data.item.gender === true ? 'Nam' : 'Nữ';
-                // console.log('d', data.item)
+                // Chuyển đổi thành đối tượng Date
+                const dateObject = new Date(data.item.birthday);
+                // Hiển thị ngày sinh dữ liệu
+                data.item.birthday = dateObject.toISOString().substring(0, 10);
+                console.log(data.item);
+                data.medias = documentMedia.message;
+                data.mediasCopy = data.medias;
+                data.removeMedia = []; // init remove medias list
             } catch (error) {
-                if (error.response) {
-                    console.log("Server-side errors", error.response.data);
-                } else if (error.request) {
-                    console.log("Client-side errors", error.request);
-                } else {
-                    console.log("Errors:", error.message);
-                }
+
             }
         })
         return {
             data,
+            uploadFile,
+            handleFileUpload,
+            handleFileUploadAvatar,
             save
         }
     }
 }
 </script>
-
 <template>
-    <div class="modal fade" id="editTeacherModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title title" id="exampleModalLabel">Thông tin giáo viên</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body row">
-                    <h3 class="text-center col-12">Thông tin cá nhân </h3>
-                    <div class="col-2 img-fluid">
-                        <img :src="`http://localhost:3000/api/user/getImg/${data.item.image}`" alt="avatar"
-                            class="img-fluid">
-                    </div>
-                    <div class="col-10">
-                        <form @submit.prevent="save" method="post">
-                            <div class="form-group row">
-                                <label for="staticEmail" class="col-sm-2 col-form-label">Họ và tên:</label>
-                                <p class="col-sm-10">{{ data.item.name }}</p>
-                            </div>
-                            <div class="form-group row">
-                                <label for="staticEmail" class="col-sm-2 col-form-label">Ngày sinh:</label>
-                                <p class="col-sm-10">{{ data.item.birthday }}</p>
-                            </div>
-                            <div class="form-group row">
-                                <label for="staticEmail" class="col-sm-2 col-form-label">Giới tính:</label>
-                                <p class="col-sm-10">{{ data.item.gender }}</p>
-                            </div>
-                            <div class="form-group row">
-                                <label for="staticEmail" class="col-sm-2 col-form-label">Số CCCD:</label>
-                                <p class="col-sm-10">{{ data.item.identification }}</p>
-                            </div>
-                            <div class="form-group row">
-                                <label for="staticEmail" class="col-sm-2 col-form-label">Địa chỉ:</label>
-                                <p class="col-sm-10">{{ data.item.address }}</p>
-                            </div>
-                            <div class="form-group row">
-                                <label for="staticEmail" class="col-sm-2 col-form-label">Email:</label>
-                                <p class="col-sm-10">{{ data.item.email }}</p>
-                            </div>
-                            <div class="form-group row">
-                                <label for="staticEmail" class="col-sm-2 col-form-label">SĐT:</label>
-                                <p class="col-sm-10">{{ data.item.phone }}</p>
-                            </div>
+    <div class="body p-3">
 
-                            <div class="form-group row">
-                                <label for="staticEmail" class="col-sm-2 col-form-label">Ảnh CCCD:</label>
-                                <div class="col-sm-10 row">
-                                    <img :src="`http://localhost:3000/api/user/getImg/${data.item.imagePrevious}`"
-                                        alt="ảnh cccd" class="img-fluid col-6">
-                                    <img :src="`http://localhost:3000/api/user/getImg/${data.item.imageAfter}`"
-                                        alt="ảnh cccd" class="img-fluid col-6">
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary mb-2">Cập nhật</button>
-                        </form>
-                    </div>
+        <form class="px-3 row" @submit.prevent="save" enctype="multipart/form-data" method="post">
+            <h2 class="text-center col-10">Thông tin giáo viên</h2>
+            <button type="submit" class="btn btn-success mt-3">Cập nhật </button>
+
+            <div class="col-6">
+                <!-- Name -->
+                <div class="form-group">
+                    <label for="exampleInputName">Họ và tên: </label>
+                    <input type="text" class="form-control" id="exampleInputName" v-model="data.item.name">
+                </div>
+                <!-- Birthday -->
+                <div class="form-group">
+                    <label for="exampleInputBirthday">Ngày sinh: </label>
+                    <input type="date" class="form-control" id="exampleInputBirthday" v-model="data.item.birthday">
+                </div>
+                <!-- gender -->
+                <div class="form-group">
+                    <label for="exampleInputGender">Giới tính: </label>
+                    <input type="radio" class="ml-3" id="exampleInputGender" name="gender" value="0"
+                        :checked="data.item.gender == true" v-model="data.item.gender">Nam
+                    <input type="radio" class="ml-3" id="exampleInputGender" name="gender" value="1"
+                        v-model="data.item.gender" :checked="data.item.gender == false">Nữ
+                </div>
+                <!-- identification -->
+                <div class="form-group">
+                    <label for="exampleInputIdentification">Số CCCD: </label>
+                    <input type="text" class="form-control" id="exampleInputIdentification"
+                        v-model="data.item.identification">
                 </div>
             </div>
-        </div>
+            <div class="col-6">
+                <!-- address -->
+                <div class="form-group">
+                    <label for="exampleInputAddress">Địa chỉ: </label>
+                    <textarea name="" cols="10" rows="3" id="exampleInputAddress" class="form-control"
+                        v-model="data.item.address"></textarea>
+                </div>
+                <!-- email -->
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        v-model="data.item.email">
+                </div>
+                <!-- phone -->
+                <div class="form-group">
+                    <label for="exampleInputPhone">SĐT: </label>
+                    <input type="tel" class="form-control" id="exampleInputPhone" v-model="data.item.phone">
+                </div>
+            </div>
+            <!-- IMG -->
+            <!-- Image cccd-->
+            <!-- Image -->
+            <div class="form-group row">
+                <label for="inputImagePrevious">Ảnh cccd :</label>
+                <div>
+                    <input type="file" ref="files" multiple @change="handleFileUpload($event)" class="form-control"
+                        id="inputImage" />
+                </div>
+                <div id="previewImagesEdit" class="container"></div>
+                <div class="row">
+                    <!-- <div v-show="data.mediasCopy" class="mt-3 imagesDiv col-6" v-for="(value, index) in data.mediasCopy"> -->
+                    <img class="images image-fluid w-50"
+                        :src="`http://localhost:3000/api/user/getImg/${data.item.image}`" />
+                    <span class="delete-icon" @click="handleDeleteMedia(value.name)">x</span>
+                    <!-- </div> -->
+                </div>
+            </div>
+            <!-- Ảnh avartar -->
+            <div class="form-group  col-12">
+                <label for="inputImage">Ảnh chân dung: </label>
+                <input type="file" multiple @change="handleFileUploadAvatar($event)" class="form-control" />
+                <div id="previewImageAvatar" class="container mt-2"></div>
+            </div>
+            <div class="form-group  col-12">
+                <label for="name">Chứng chỉ: </label>
+                <input type="text" class="form-control" v-model="data.item.certifications[0].name" />
+            </div>
+        </form>
     </div>
 </template>
-
-<style scoped>
-.modal-content {
-    width: 200%;
-    margin-left: -40%;
-
-}
-</style>

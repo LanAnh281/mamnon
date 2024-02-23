@@ -1,11 +1,11 @@
 <template>
   <div>
     <div v-if="isLoginPath == false">
-      <Header v-if="username != 'admin'"></Header>
+      <Header v-if="userName != 'giáo viên'"></Header>
 
       <div class="fluid-container">
         <div class="row m-0 p-0">
-          <SideBar class="col-2" v-if="username == 'admin'"></SideBar>
+          <SideBar class="col-2" v-if="userName == 'giáo viên' || userName == 'hiệu trưởng'"></SideBar>
           <span class=""></span>
           <router-view class="col"></router-view>
         </div>
@@ -34,10 +34,10 @@ export default {
   setup() {
     const route = useRoute();
     const isLoginPath = ref(false);
-    const username = ref('');
+    const userName = ref('');
     onMounted(() => {
-      username.value = localStorage.getItem('username');
-      console.log(username.value);
+      userName.value = localStorage.getItem('userName');
+      console.log(userName.value);
     });
     watch(
       () => route.fullPath,
@@ -50,7 +50,7 @@ export default {
         console.log("Đã chuyển từ:", oldPath);
         console.log("Đã chuyển đến:", newPath);
         if (newPath == "/") {
-          username.value = '';
+          userName.value = '';
         }
         // Thực hiện các hành động khác khi chuyển trang xảy ra
       }
@@ -59,7 +59,7 @@ export default {
 
     return {
       isLoginPath,
-      username
+      userName
     };
   },
 };

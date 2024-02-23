@@ -35,9 +35,8 @@ export default {
         <table class="table">
             <thead class="thead-dark">
                 <tr>
-
-                    <th scope="col">
-                        <input type="checkbox" name="checkAll" id="checkAll">
+                    <th scope="col">#
+                        <!-- <input type="checkbox" v-model="data.checkedList"> -->
                     </th>
                     <th scope="col" v-for="(filed, index) in fields" :key="index">
                         {{ filed }}
@@ -48,7 +47,7 @@ export default {
             <tbody>
                 <tr v-for="(value, index) in data" :key="index">
                     <td>
-                        <input type="checkbox" v-model="data.checkedList" :checked="value.checked == true">
+                        <input type="checkbox" v-model="value.checked" />
                     </td>
                     <td v-for="(title, index1) in titles" :key="index1">
                         {{ value[title] }}

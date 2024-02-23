@@ -6,6 +6,11 @@ const routes = [
     name: "login",
     component: () => import("../view/common/login.vue"),
   },
+  {
+    path: "/changePassword",
+    name: "changePassword",
+    component: () => import("../view/common/changePassword.vue"),
+  },
   //Admin
   {
     path: "/admin/account",
@@ -22,6 +27,7 @@ const routes = [
     name: "menuDaily",
     component: () => import("../view/admin/menuDaily/index.vue"),
   },
+  // teacher
   {
     path: "/admin/teacher",
     name: "teacher",
@@ -30,9 +36,34 @@ const routes = [
   {
     path: "/admin/addTeacher",
     name: "addTeacher",
-    component: () => import("../view/admin/teacher/addTeacher.vue"),
-
-
+    component: () => import("../view/admin/teacher/add.vue"),
+  },
+  {
+    path: "/admin/editTeacher",
+    name: "editTeacher",
+    component: () => import("../view/admin/teacher/edit.vue"),
+  },
+  // class
+  {
+    path: "/admin/class",
+    name: "class",
+    component: () => import("../view/admin/class/index.vue"),
+  },
+  {
+    path: "/admin/addClass",
+    name: "addClass",
+    component: () => import("../view/admin/class/add.vue"),
+  },
+  //parents
+  {
+    path: "/admin/parents",
+    name: "parents",
+    component: () => import("../view/admin/parents/index.vue"),
+  },
+  {
+    path: "/admin/addParents",
+    name: "addParent",
+    component: () => import("../view/admin/parents/add.vue"),
   },
   {
     path: "/admin/print",
