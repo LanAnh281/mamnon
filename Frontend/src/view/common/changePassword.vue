@@ -30,7 +30,6 @@ export default {
                     }
                 }
                 if (!data.flag) {
-                    console.log('ccc:', data.item);
                     const document = await accountService.update(data.item);
                     if (document.status === "success") {
                         success("Thành công", "Thay đổi mật khẩu thành công.");
@@ -53,19 +52,13 @@ export default {
 };
 </script>
 <template>
-    <div class="body m-0 container-fluid">
-        <div class="row justify-content-around align-items-center" style="height: calc(100vh - var(--footer))">
+    <div class="body " style="padding-top:15%">
+        <div class="row justify-content-around " style="height: calc(100vh - var(--footer));">
             <div class="card shadow col-6 w-100">
                 <div class="row justify-content-center">
-                    <!-- <router-link :to="{ name: 'user' }" class="col-3">
-            <img
-              src="../../assets/image/logo.PNG"
-              style="width: 100%; height: 100%"
-            />
-          </router-link> -->
-                    <h4 class="text-center mt-3 ml-3 col-12 title">Đổi mật khẩu</h4>
+                    <h3 class="text-center mt-3 ml-3 col-12 title">Đổi mật khẩu</h3>
                 </div>
-                <form @submit.prevent="changePassword" class="container mt-3">
+                <form @submit.prevent="changePassword" class="container mt-3 ">
                     <div class="form-group row">
                         <label for="inputPasswordOld" class="col-sm-4 col-form-label p-0 m-0">Mật khẩu cũ :</label>
                         <div class="col-sm-8 p-0 m-0">
@@ -74,11 +67,10 @@ export default {
                                     data.error.passwordOld = 'Chưa nhập mật khẩu';
                                     data.flag = true;
                                 }
-                            }
-                                " @input="
-        data.error.passwordOld = '';
-    data.flag = false;
-    " v-model="data.item.passwordOld" />
+                            }" @input="
+    data.error.passwordOld = '';
+data.flag = false;
+" v-model="data.item.passwordOld" />
                             <div v-if="data.error.passwordOld" class="invalid-error">
                                 {{ data.error.passwordOld }}
                             </div>

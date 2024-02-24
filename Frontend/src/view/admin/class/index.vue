@@ -1,5 +1,7 @@
 <script>
 import { reactive, ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+// service
 import schoolService from "../../../service/school.service";
 import userService from "../../../service/user.service";
 import classService from "../../../service/class.service";
@@ -15,6 +17,8 @@ import { success } from "../../../assets/js/alert.common";
 export default {
     components: { Add, Info, Edit, Table },
     setup() {
+        const route = useRoute();
+        const router = useRouter();
         const data = reactive({
             items: [],
             activeData: '',
@@ -42,9 +46,16 @@ export default {
         const handleInfo = async (value) => {
             try {
                 data.active = value;
-                activeInfo.value = !activeInfo.value;
+                // activeInfo.value = !activeInfo.value;
+                router.push({ name: 'infoClass', query: { _id: data.active } })
             } catch (error) {
-
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
             }
         }
         const handleAdd = async (value) => {
@@ -151,12 +162,10 @@ export default {
         <div class="information">
             <h2>Danh sách lớp học</h2>
             <p class="mx-auto dash"></p>
-            <!-- <router-link class="float-right mx-3 btn btn-success mb-3" :to="{ name: 'addClass' }">+
-            </router-link> -->
-            <button class="btn btn-success float-right mb-3" @click="handleInfo">+</button>
+            <button class="btn btn-success float-right mb-3">+</button>
         </div>
         <div>
-            <Table :data="data.items" :name="'Class'" :fields="['Tên loại lớp', 'Mô tả', 'Số lớp']" @click="handleInfo"
+            <Table :data="data.items" :name="'Class'" :fields="['Tên loại lớp', 'Mô tả', 'Số lớp']"
                 :titles="['name', 'description', 'classNumber']" :action="true" :actionList="['info', 'edit', 'delete']"
                 :checked="true" @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
             </Table>

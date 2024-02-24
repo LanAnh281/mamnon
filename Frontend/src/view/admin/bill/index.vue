@@ -143,7 +143,7 @@ export default {
 <template>
     <div class="body p-3">
         <div class="information">
-            <h3 class="text-center">Thực đơn</h3>
+            <h3 class="text-center">Danh sách hóa đơn</h3>
             <p class="mx-auto dash"></p>
             <router-link class="float-right mx-3 btn btn-success mb-3" :to="{ name: 'addTeacher' }">+
             </router-link>

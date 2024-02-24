@@ -10,7 +10,7 @@ import { onMounted } from "vue";
 import {
   checkCookieExistence,
   getCookieValue,
-} from "../../../assets/js/common.login";
+} from "../../../assets/js/login.common";
 import loginService from "../../../service/login.service";
 export default {
   components: {},

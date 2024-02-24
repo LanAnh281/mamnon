@@ -14,8 +14,8 @@ const routes = [
   //Admin
   {
     path: "/admin/account",
-    name: "Account",
-    component: () => import("../view/admin/account/account.vue"),
+    name: "account",
+    component: () => import("../view/admin/account/index.vue"),
   },
   {
     path: "/admin/school",
@@ -54,6 +54,11 @@ const routes = [
     name: "addClass",
     component: () => import("../view/admin/class/add.vue"),
   },
+  {
+    path: "/admin/infoClass",
+    name: "infoClass",
+    component: () => import("../view/admin/class/info.vue"),
+  },
   //parents
   {
     path: "/admin/parents",
@@ -65,6 +70,39 @@ const routes = [
     name: "addParent",
     component: () => import("../view/admin/parents/add.vue"),
   },
+  //menu
+  {
+    path: "/admin/menuDaily",
+    name: "menuDaily",
+    component: () => import("../view/admin/menuDaily/index.vue"),
+  },
+  //bill
+  {
+    path: "/admin/bill",
+    name: "bill",
+    component: () => import("../view/admin/bill/index.vue"),
+  },
+
+  //noti
+  {
+    path: "/admin/notification",
+    name: "notification",
+    component: () => import("../view/admin/notification/index.vue"),
+  },
+  // dashboard
+  {
+    path: "/admin/dashboard",
+    name: "dashboard",
+    component: () => import("../view/admin/dashboard/index.vue"),
+  },
+  // report
+  {
+    path: "/admin/report",
+    name: "report",
+    component: () => import("../view/admin/report/index.vue"),
+  },
+
+  //
   {
     path: "/admin/print",
     name: "printAccount",
