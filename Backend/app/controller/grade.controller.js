@@ -35,6 +35,9 @@ exports.findOne = async (req, res, next) => {
             where: {
                 _id: req.params.id,
             },
+            include: {
+                model: classRoom
+            }
         });
         return res.json({ message: document, status: "success" });
     } catch (error) {
