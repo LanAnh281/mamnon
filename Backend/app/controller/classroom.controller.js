@@ -2,7 +2,7 @@ const { classRoom, grade } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
     const { name, gradeId, courseId } = req.body;
-    console.log("classRoom Body:", req.body);
+    console.log("class Body:", req.body);
     try {
         const document = await classRoom.create({
             name: name,

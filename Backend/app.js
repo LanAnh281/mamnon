@@ -37,6 +37,7 @@ const programsRoute = require("./app/route/program.route");
 const userRoute = require("./app/route/user.route");
 const loginRoute = require("./app/route/login.route");
 const childrenRoute = require("./app/route/children.route")
+const parentRoute = require("./app/route/parent.route")
 // API
 app.use("/static", express.static(path.join(__dirname, "static")));
 server.listen(3000, () => {
@@ -78,6 +79,8 @@ app.use("/api/program", programsRoute);
 app.use("/api/user", userRoute);
 app.use("/api/login", loginRoute);
 app.use("/api/children", childrenRoute);
+app.use("/api/parent", parentRoute);
+
 // API
 // check errors
 app.use((req, res, next) => {

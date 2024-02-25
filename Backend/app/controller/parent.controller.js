@@ -16,12 +16,11 @@ const setPassword = () => {
     return password;
 };
 exports.create = async (req, res, next) => {
-    const { name, birthday, gender, identification, address, email, phone, positionName, nameCertification } = req.body;
+    const { name, birthday, gender, identification, address, email, phone, positionName, children } = req.body;
     const { avatar, files } = req.files;
     console.log("File:", req.files)
     console.log("IMG:", avatar[0].filename, files[0].filename, files[1].filename);
     try {
-
         const permission = await Permissions.findOne({
             where: {
                 name: positionName
@@ -35,16 +34,8 @@ exports.create = async (req, res, next) => {
             address: address,
             email: email,
             phone: phone,
-            imagePrevious: files[0].originalname,
-            imageAfter: files[1].originalname,
-            image: avatar[0].originalname,
             positionName: positionName
         });
-        // chứng chỉ
-        const documentCer = await certification.create({
-            name: nameCertification,
-            userId: document._id
-        })
 
         console.log("BAC:", document);
         // tạo tài khoản
@@ -56,6 +47,16 @@ exports.create = async (req, res, next) => {
             userId: document._id,
             permissionId: permission._id
         })
+        // tạo trẻ cần thông tin cơ bản của trẻ và mã phụ huynh và mã lớp trẻ học
+        console.log("DS TRẺ:", children);
+        if (children.length > 1) {
+            for (let i = 0; i < children.length; i++) {
+                //thêm từng trẻ vào
+            }
+        } else {
+            // thêm 1 trẻ
+        }
+
         console.log("ACC:", newAccount);
         document.dataValues['password'] = newAccount.password;
         return res.json({ message: document, status: "success" });
