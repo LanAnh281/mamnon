@@ -13,7 +13,10 @@ router.route("/")
         user.create)
 router.route("/:id")
     .get(user.findOne)
-    .put(user.updated)
+    .put(upload.upload.fields([
+        { name: "avatar", maxCount: 2 },
+        { name: "files", maxCount: 2 }
+    ]), user.updated)
     .delete(user.delete);
 router.route("/getImg/:id").get(user.getImg);
 module.exports = router;

@@ -1,4 +1,4 @@
-const { Users, certification, Accounts, Permissions } = require("../models/index");
+const { Users, certification, Accounts, Permissions, daily } = require("../models/index");
 const ApiError = require("../api-error");
 const fs = require("fs");
 const path = require("path");
@@ -108,12 +108,13 @@ exports.findOne = async (req, res, next) => {
     }
 };
 exports.updated = async (req, res, next) => {
-    const { name, birthday, gender, identification, address, email, phone, positionName, nameCertification } = req.body;
+    const { name, birthday, gender, identification, address, email, phone, positionName, nameCertification, image, imageAfter, imagePrevious, remove } = req.body;
+    console.log(req.body);
     const { avatar, files } = req.files;
     console.log("File:", req.files)
-    console.log("IMG:", avatar[0].filename, files[0].filename, files[1].filename);
+    // console.log("IMG:", avatar[0].filename, files[0].filename, files[1].filename);
     try {
-        const document = await Users.update(
+        const documentUser = await Users.update(
             {
                 name: name,
                 birthday: birthday,
@@ -122,10 +123,6 @@ exports.updated = async (req, res, next) => {
                 address: address,
                 email: email,
                 phone: phone,
-                imagePrevious: files[0].originalname,
-                imageAfter: files[1].originalname,
-                image: avatar[0].originalname,
-                positionName: positionName
             },
             {
                 where: {
@@ -133,10 +130,97 @@ exports.updated = async (req, res, next) => {
                 },
             }
         );
-        return res.json({ message: document, status: "success" });
+        const documentCer = await certification.update(
+            {
+                name: nameCertification,
+                userId: req.params.id
+            },
+            {
+                where: {
+                    userId: req.params.id
+                }
+            })
+        // có chỉnh sửa cả cccd và chân dung
+        if (Object.keys(req.files).length != 0) {
+            console.log(files, files == undefined);
+            if (files != undefined && avatar != undefined) {
+                const document = await Users.update(
+                    {
+                        imagePrevious: files[0].originalname,
+                        imageAfter: files[1].originalname,
+                        image: avatar[0].originalname,
+                    },
+                    {
+                        where: {
+                            _id: req.params.id,
+                        },
+                    }
+                );
+
+                // xóa đi cccd và avatar trên thư mục uploads/images 
+
+                for (let media of remove) {
+                    console.log('media', media);
+                    let filePath = `${uploadDir}/${media}`;
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath); //delete file
+                        console.log(">>>Destroy:");
+                    }
+                }
+
+            }
+            // chỉnh sửa cccd 
+            else if (files != undefined) {
+                if (files[0].filename && files[1].filename) {
+                    const document = await Users.update(
+                        {
+                            imagePrevious: files[0].originalname,
+                            imageAfter: files[1].originalname,
+                        },
+                        {
+                            where: {
+                                _id: req.params.id,
+                            },
+                        }
+                    );
+                    for (let media of remove) {
+                        console.log('media', media);
+                        let filePath = `${uploadDir}/${media}`;
+                        if (fs.existsSync(filePath)) {
+                            fs.unlinkSync(filePath); //delete file
+                            console.log(">>>Destroy:");
+                        }
+                    }
+                }
+
+            } else if (avatar != undefined) {
+                console.log('cập nhật avatar');
+                if (avatar[0].filename) {
+                    const document = await Users.update(
+                        {
+                            image: avatar[0].originalname,
+                        },
+                        {
+                            where: {
+                                _id: req.params.id,
+                            },
+                        }
+                    );
+                    let filePath = `${uploadDir}/${remove}`;
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath); //delete file
+                        console.log(">>>Destroy:");
+                    }
+
+                }
+
+            }
+
+        }
+        return res.json({ message: documentUser, status: "success" });
     } catch (error) {
         console.log(error);
-        return next(new ApiError(500, 'An error occurred while updating the role'))
+        return next(new ApiError(500, 'An error occurred while updating the user'))
     }
 };
 exports.delete = async (req, res, next) => {
