@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRoute, useRouter } from "vue-router"
 // services
 import userService from "../../../service/user.service";
+import gradeService from "../../../service/grade.service";
 //component
 import Select from "../../../components/select/dependent.select.vue";
 export default {
@@ -14,8 +15,9 @@ export default {
         const route = useRoute();
         const data = reactive({
             item: { name: "", birthday: "", gender: "", email: "", phone: "", address: "", positionName: "giáo viên", identification: "", nameCertification: "", numberChildren: 0 },
-        })
-
+            grades: [{ name: "" }]
+        });
+        const children = reactive({ items: [] })
         const save = async () => {
             try {
                 console.log(children.items);
@@ -33,7 +35,7 @@ export default {
                 }
             }
         }
-        const children = reactive({ items: [] })
+
         const handleChildren = async () => {
             try {
                 children.items = [];
@@ -53,6 +55,9 @@ export default {
 
         onMounted(async () => {
             try {
+                const documentGrade = await gradeService.getAll();
+                data.grades = documentGrade.message;
+                console.log(documentGrade.message);
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -139,7 +144,7 @@ export default {
                     </div>
                     <div class="form-group">
                         <label for="exampleInputPhone">Ngày sinh: </label>
-                        <input type="text" class="form-control" v-model="children.items[index].name">
+                        <input type="date" class="form-control" v-model="children.items[index].birthday">
                     </div>
                     <div class="form-group">
                         <label for="exampleInputGender">Giới tính: </label>
@@ -150,8 +155,19 @@ export default {
                     </div>
                     <div class="form-group">
                         <label for="exampleInputPhone">Mối quan hệ với trẻ: </label>
-                        <input type="text" class="form-control" v-model="children.items[index].name">
+                        <input type="text" class="form-control" v-model="children.items[index].relationship">
                     </div>
+                    <!-- Loại lớp -->
+                    <div class="form-group">
+                        <label for="cars">Loại lớp :</label>
+                        <select name="cars" id="cars" class="form-control">
+                            <option value="Chọn loại lớp">--Chọn loại lớp--</option>
+                            <option v-for="(grade, index) in data.grades" :key="index" :value="grade">
+                                {{ grade.name }}</option>
+                        </select>
+                    </div>
+
+
                 </div>
 
             </div>

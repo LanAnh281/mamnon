@@ -143,7 +143,7 @@ export default {
 
         </div>
         <div>
-            <h2 class="text-primary">Góc ảnh ...</h2>
+            <h2 class="text-primary">Góc ảnh trường {{ data.items['name'] }}</h2>
             <p class="dash mx-auto"></p>
             <!-- form -->
             <div class="float-right mx-3 btn btn-success" @click="add" data-toggle="modal" data-target="#schoolModal">

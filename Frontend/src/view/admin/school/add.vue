@@ -46,7 +46,7 @@ export default {
                 for (const file of data.uploadFiles) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        const colImage = document.createElement("div"); colImage.classList.add("col-6", "mt-2");
+                        const colImage = document.createElement("div"); colImage.classList.add("col-3", "mt-2");
                         colImage.style.position = "relative";
                         colImage.id = file.name;
                         const img = document.createElement("img");

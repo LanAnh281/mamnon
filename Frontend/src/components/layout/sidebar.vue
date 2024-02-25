@@ -94,7 +94,7 @@ export default {
     <div class="list mx-2">
       <ul>
         <li v-for="(value, index) in data.item" :key="index" class="pl-2 my-3"
-          :class="data.active == value.active ? 'isActive' : ''" @click="() => {
+          :class="data.active.includes(value.active) ? 'isActive' : ''" @click="() => {
             if (value.active == 'logout') {
               logout();
               return;

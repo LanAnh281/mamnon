@@ -8,8 +8,20 @@ export default {
     props: { _id: String },
     setup(props, emit) {
         const data = reactive({ item: {} })
+        const isModalOpen = ref(false);
+        const openModal = () => {
+            isModalOpen.value = true;
+            console.log("open modal info user");
+        };
+        const closeModal = () => {
+            console.log("close modal info user");
+            emit("closeModal");
+        };
         onMounted(async () => {
             try {
+                $("#infoTeacherModal").on("show.bs.modal", openModal); //lắng nghe mở modal
+                $("#infoTeacherModal").on("hidden.bs.modal", closeModal); //lắng nghe đóng modal
+
                 const document = await userService.get(props._id);
                 data.item = document.message;
 

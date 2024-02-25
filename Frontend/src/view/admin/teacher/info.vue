@@ -1,22 +1,33 @@
 <script>
-import { reactive, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 // service
 import userService from "../../../service/user.service";
 //js
 import { formatDateTime } from "../../../assets/js/format.common"
 export default {
     props: { _id: String },
-    setup(props, emit) {
-        const data = reactive({ item: {} })
+    setup(props, { emit }) {
+        const data = reactive({ item: {} });
+        const isModalOpen = ref(false);
+        const openModal = () => {
+            isModalOpen.value = true;
+            console.log("open modal info user");
+        };
+        const closeModal = () => {
+            console.log("close modal info user");
+            emit("closeModal");
+        };
         onMounted(async () => {
             try {
+                $("#infoTeacherModal").on("show.bs.modal", openModal); //lắng nghe mở modal
+                $("#infoTeacherModal").on("hidden.bs.modal", closeModal); //lắng nghe đóng modal
                 const document = await userService.get(props._id);
                 data.item = document.message;
 
                 // format date 
                 data.item.birthday = formatDateTime(data.item.birthday);
                 data.item.gender = data.item.gender === true ? 'Nam' : 'Nữ';
-                // console.log('d', data.item)
+                console.log('d', props._id)
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);

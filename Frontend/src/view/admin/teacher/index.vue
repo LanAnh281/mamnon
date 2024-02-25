@@ -51,7 +51,6 @@ export default {
             try {
                 data.activeData = value;
                 const document = await userService.delete(data.activeData);
-                console.log('de:', document);
                 await refresh();
             } catch (error) {
                 if (error.response) {
@@ -153,7 +152,7 @@ export default {
                 :titles="['name', 'phone', 'email']" :action="true" :actionList="['info', 'edit', 'delete']" :checked="true"
                 @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
             </Table>
-            <Info :_id="data.activeData" v-if="activeInfo"></Info>
+            <Info :_id="data.activeData" v-if="activeInfo" @closeModal="() => { activeInfo = !activeInfo }"></Info>
 
 
             <!-- <Edit :_id="data.activeData" v-if="activeEdit"></Edit> -->

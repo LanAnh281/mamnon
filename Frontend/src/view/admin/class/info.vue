@@ -1,5 +1,5 @@
 <script>
-import { reactive, onMounted } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 // service
 import userService from "../../../service/user.service";
@@ -17,6 +17,16 @@ export default {
     setup(props, emit) {
         const router = useRouter();
         const route = useRoute();
+        const isModalOpen = ref(false);
+        const openModal = () => {
+            isModalOpen.value = true;
+            console.log("open modal info user");
+        };
+        const closeModal = () => {
+            console.log("close modal info user");
+            emit("closeModal");
+        };
+
         const data = reactive({
             class: {
 
@@ -102,6 +112,9 @@ export default {
         }
         onMounted(async () => {
             try {
+                $("#infoTeacherModal").on("show.bs.modal", openModal); //lắng nghe mở modal
+                $("#infoTeacherModal").on("hidden.bs.modal", closeModal); //lắng nghe đóng modal
+
                 const documentClass = await gradeService.get(route.query['_id']);
                 data.class = documentClass.message.classRooms;
                 data.class = data.class.map((item) => {
@@ -109,8 +122,11 @@ export default {
                         ...item,
                         active: false,
                     }
-                })
+                });
+                data.class[0].active = true;
+                data.active = data.class[0]._id;
                 const document = await childrenService.get(data.active);
+                data.items = document.message;
                 console.log(document.message);
             } catch (error) {
                 if (error.response) {
@@ -141,7 +157,8 @@ export default {
         <p class="mx-auto dash"></p>
         <button class="btn btn-success float-right mb-3 mr-3">+</button>
         <button class="btn  mx-2 my-3" v-for="(value, index) in data.class" :key="index"
-            :class="value.active == true ? 'btn-success' : ''" @click="handleActive(value._id)">{{ value.name }}</button>
+            :class="value.active == true ? 'btn-success' : ''" @click="handleActive(value._id)">Lớp {{ value.name
+            }}</button>
 
         <Table :data="data.items" :name="'Class'" :fields="['Họ tên', 'Giới tính', 'Ngày sinh']"
             :titles="['name', 'gender', 'birthday']" :action="true" :actionList="['info', 'edit', 'delete']" :checked="true"

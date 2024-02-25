@@ -66,11 +66,6 @@ export default {
             'positionName', 'nameCertification'
         ]
         const save = async () => {
-            // router.push({
-            //     name: "printAccount", params: {
-            //         dataToPrint: document // Thay yourData bằng dữ liệu cần truyền
-            //     }
-            // });            
             try {
                 const formData = new FormData();
                 // avatar
@@ -82,7 +77,6 @@ export default {
 
                 });
                 //cccd
-
                 _.forEach(data.uploadFiles, (file) => {
                     formData.append("files", file);
                 });
@@ -92,10 +86,9 @@ export default {
                 const document = await userService.create(formData);
                 console.log("DOC:", document, document.message['password'])
                 if (document['status'] == 'success') {
-                    // window.location.href = 'printAccount';
                     router.push({
-                        name: "printAccount", params: {
-                            dataToPrint: document.message, password: document.message['password'] // Thay yourData bằng dữ liệu cần truyền
+                        name: "printAccount", query: {
+                            name: data.item.name, phone: document.message['phone'], password: document.message['password'] // Thay yourData bằng dữ liệu cần truyền
                         }
                     });
                 }
