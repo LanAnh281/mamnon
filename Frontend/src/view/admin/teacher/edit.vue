@@ -18,23 +18,16 @@ export default {
         const data = reactive({
             item: { name: "", birthday: "", gender: "", email: "", phone: "", address: "", positionName: "giáo viên", identification: "", nameCertification: "", certifications: [{ name: '' }] },
             uploadFiles: [], files: [], uploadAvatar: [], fileAvatar: [],
-            city: [],
-            medias: [],
             uploadFiles: [],
             files: [],
-            flag: false,
-            boarding: {},
-            removeMedia: [],
-            mediasCopy: [],
+            removeImage: [],
+
         });
 
         const uploadInput = document.getElementById('imageUpload');
-        // uploadInput.addEventListener('click', function () { console.log('up'); })
         const uploadFile = async () => {
             try {
                 console.log('up');
-                // const uploadInput = document.getElementById('imageUpload');
-                // uploadFile.addEventListener('click', function () {
                 const uploadInput = document.createElement('input');
                 uploadInput.type = 'file';
                 uploadInput.accept = 'image/*';
@@ -74,7 +67,12 @@ export default {
             'address',
             'email',
             'phone',
-            'positionName', 'nameCertification'
+            'positionName',
+            'nameCertification',
+            // 
+            'image',
+            'imageAfter',
+            'imagePrevious'
         ]
         const save = async () => {
             try {
@@ -85,28 +83,32 @@ export default {
 
                 _.forEach(data.uploadAvatar, (file) => {
                     formData.append("avatar", file);
-
                 });
                 //cccd
-
                 _.forEach(data.uploadFiles, (file) => {
                     formData.append("files", file);
                 });
+                data.item.nameCertification = data.item.certifications[0].name;
                 _.forEach(formFields, (field) => {
                     formData.append(field, data.item[field]);
                 });
-                const document = await userService.create(formData);
+                console.log(data.removeImage);
+                _.forEach(data.removeImage, (image) => {
+                    formData.append('remove', image);
+                });
+                const document = await userService.update(route.query['_id'], formData);
                 console.log("DOC:", document, document.message['password'])
                 if (document['status'] == 'success') {
-                    // window.location.href = 'printAccount';
-                    router.push({
-                        name: "printAccount", params: {
-                            dataToPrint: document.message, password: document.message['password'] // Thay yourData bằng dữ liệu cần truyền
-                        }
-                    });
+
                 }
             } catch (error) {
-                console.log("E:", error)
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
             }
         }
         const handleFileUpload = async (event) => {
@@ -315,7 +317,65 @@ export default {
                 reader.readAsDataURL(file);
             }
         };
+        const handleDeleteImageAfter = async (name) => {
+            try {
+                data.removeImage.push(name);
+                data.item.imageAfter = '';
+                const imageAfterElement = document.getElementById('imageAfter');
+                if (imageAfterElement) {
+                    imageAfterElement.remove();
+                }
+                console.log(imagePreviousElement);
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
+        }
+        const handleDeleteImagePrevious = async (name) => {
+            try {
+                data.removeImage.push(name);
 
+                data.item.imagePrevious = '';
+                const imagePreviousElement = document.getElementById('imagePrevious');
+                if (imagePreviousElement) {
+                    imagePreviousElement.remove();
+                }
+                console.log(imagePreviousElement);
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
+        }
+        const handleDeleteAvatar = async (name) => {
+            try {
+                data.removeImage.push(name);
+
+                data.item.image = '';
+                const avatarElement = document.getElementById('avatar');
+                if (avatarElement) {
+                    avatarElement.remove();
+                }
+                console.log(avatarElement);
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
+        }
         onMounted(async () => {
             try {
                 const document = await userService.get(route.query['_id']);
@@ -325,11 +385,14 @@ export default {
                 // Hiển thị ngày sinh dữ liệu
                 data.item.birthday = dateObject.toISOString().substring(0, 10);
                 console.log(data.item);
-                data.medias = documentMedia.message;
-                data.mediasCopy = data.medias;
-                data.removeMedia = []; // init remove medias list
             } catch (error) {
-
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
             }
         })
         return {
@@ -337,6 +400,9 @@ export default {
             uploadFile,
             handleFileUpload,
             handleFileUploadAvatar,
+            handleDeleteImagePrevious,
+            handleDeleteImageAfter,
+            handleDeleteAvatar,
             save
         }
     }
@@ -344,7 +410,6 @@ export default {
 </script>
 <template>
     <div class="body p-3">
-
         <form class="px-3 row" @submit.prevent="save" enctype="multipart/form-data" method="post">
             <h2 class="text-center col-10">Thông tin giáo viên</h2>
             <button type="submit" class="btn btn-success mt-3">Cập nhật </button>
@@ -364,9 +429,9 @@ export default {
                 <div class="form-group">
                     <label for="exampleInputGender">Giới tính: </label>
                     <input type="radio" class="ml-3" id="exampleInputGender" name="gender" value="0"
-                        :checked="data.item.gender == true" v-model="data.item.gender">Nam
+                        v-model="data.item.gender" :checked="data.item.gender == false">Nam
                     <input type="radio" class="ml-3" id="exampleInputGender" name="gender" value="1"
-                        v-model="data.item.gender" :checked="data.item.gender == false">Nữ
+                        v-model="data.item.gender" :checked="data.item.gender == true">Nữ
                 </div>
                 <!-- identification -->
                 <div class="form-group">
@@ -375,6 +440,7 @@ export default {
                         v-model="data.item.identification">
                 </div>
             </div>
+
             <div class="col-6">
                 <!-- address -->
                 <div class="form-group">
@@ -396,27 +462,39 @@ export default {
             </div>
             <!-- IMG -->
             <!-- Image cccd-->
-            <!-- Image -->
-            <div class="form-group row">
-                <label for="inputImagePrevious">Ảnh cccd :</label>
-                <div>
-                    <input type="file" ref="files" multiple @change="handleFileUpload($event)" class="form-control"
-                        id="inputImage" />
+            <div class="form-group  col-12">
+                <label for="inputImage">Ảnh CCCD: </label>
+                <input type="file" multiple @change="handleFileUpload($event)" class="form-control" id="inputImage" />
+                <div id="previewImages" class="container mt-2"></div>
+
+                <div class="row ">
+                    <!-- imageAfter -->
+                    <div class="col-6" id="imageAfter">
+                        <img class="images image-fluid w-50"
+                            :src="`http://localhost:3000/api/user/getImg/${data.item.imageAfter}`" />
+                        <span class="delete-icon" @click="handleDeleteImageAfter(data.item.imageAfter)">x</span>
+                    </div>
+                    <!-- imagePrevious -->
+                    <div class="col-6" id="imagePrevious">
+                        <img class="images image-fluid w-50"
+                            :src="`http://localhost:3000/api/user/getImg/${data.item.imagePrevious}`" />
+                        <span class="delete-icon" @click="handleDeleteImagePrevious(data.item.imagePrevious)">x</span>
+                    </div>
                 </div>
-                <div id="previewImagesEdit" class="container"></div>
-                <div class="row">
-                    <!-- <div v-show="data.mediasCopy" class="mt-3 imagesDiv col-6" v-for="(value, index) in data.mediasCopy"> -->
-                    <img class="images image-fluid w-50"
-                        :src="`http://localhost:3000/api/user/getImg/${data.item.image}`" />
-                    <span class="delete-icon" @click="handleDeleteMedia(value.name)">x</span>
-                    <!-- </div> -->
-                </div>
+
+
             </div>
             <!-- Ảnh avartar -->
             <div class="form-group  col-12">
                 <label for="inputImage">Ảnh chân dung: </label>
                 <input type="file" multiple @change="handleFileUploadAvatar($event)" class="form-control" />
                 <div id="previewImageAvatar" class="container mt-2"></div>
+                <div class="col-6" id="avatar">
+                    <img class="images image-fluid w-50"
+                        :src="`http://localhost:3000/api/user/getImg/${data.item.image}`" />
+                    <span class="delete-icon" @click="handleDeleteAvatar(data.item.image)">x</span>
+                </div>
+
             </div>
             <div class="form-group  col-12">
                 <label for="name">Chứng chỉ: </label>
