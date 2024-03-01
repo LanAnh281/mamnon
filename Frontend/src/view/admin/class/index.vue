@@ -3,8 +3,6 @@ import { reactive, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 // service
 import schoolService from "../../../service/school.service";
-import userService from "../../../service/user.service";
-import classService from "../../../service/class.service";
 import gradeService from "../../../service/grade.service";
 
 //component
@@ -69,7 +67,7 @@ export default {
         const handeleDelete = async (value) => {
             try {
                 data.activeData = value;
-                const document = await userService.delete(data.activeData);
+                const document = await gradeService.delete(data.activeData);
                 console.log('de:', document);
                 await refresh();
             } catch (error) {
@@ -149,6 +147,7 @@ export default {
             activeEdit,
             activeDelete,
             // method
+            refresh,
             handleInfo,
             handeleDelete,
             handleEdit,
@@ -162,14 +161,15 @@ export default {
         <div class="information">
             <h2>Danh sách lớp học</h2>
             <p class="mx-auto dash"></p>
-            <button class="btn btn-success float-right mb-3">+</button>
+            <button class="btn btn-success float-right mb-3" @click="activeAdd = !activeAdd" data-toggle="modal"
+                data-target="#addGradeModal">+</button>
         </div>
         <div>
             <Table :data="data.items" :name="'Class'" :fields="['Tên loại lớp', 'Mô tả', 'Số lớp']"
                 :titles="['name', 'description', 'classNumber']" :action="true" :actionList="['info', 'edit', 'delete']"
                 :checked="true" @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
             </Table>
-            <Add v-if="activeAdd"></Add>
+            <Add v-if="activeAdd" @add="refresh()"></Add>
             <Info :_id="data.activeData" v-if="activeInfo"></Info>
             <Edit :_id="data.activeData" v-if="activeEdit"></Edit>
         </div>

@@ -116,8 +116,8 @@ export default {
                             class="form-control col-10">
                     </div>
                     <div class="form-group row">
-                        <label for="secretId" class="col-2">clientId: </label>
-                        <input type="text" name="clientId" id="secretId" v-model="data.items['secretId']"
+                        <label for="secretId" class="col-2">secretId: </label>
+                        <input type="text" name="secretId" id="secretId" v-model="data.items['secretId']"
                             class="form-control col-10">
                     </div>
                     <div class="form-group row">

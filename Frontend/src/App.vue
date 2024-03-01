@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="isLoginPath == false">
-      <Header v-if="userName != 'giáo viên'"></Header>
+      <Header v-if="userName != 'giáo viên' && userName != 'hiệu trưởng'"></Header>
 
       <div class="fluid-container">
         <div class="row m-0 p-0">

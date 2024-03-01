@@ -54,8 +54,8 @@ export default {
             }
         };
         onMounted(async () => {
-            $("#addGradeModal").on("show.bs.modal", openModal); //lắng nghe mở modal
-            $("#addGradeModal").on("hidden.bs.modal", closeModal); //lắng nghe đóng modal
+            $("#assignmentTeacherModal").on("show.bs.modal", openModal); //lắng nghe mở modal
+            $("#assignmentTeacherModal").on("hidden.bs.modal", closeModal); //lắng nghe đóng modal
         });
 
         return {
@@ -69,12 +69,12 @@ export default {
 };
 </script>
 <template>
-    <div class="modal fade" id="addGradeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="assignmentTeacherModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title title" id="exampleModalLabel">Thêm loại lớp</h5>
+                    <h5 class="modal-title title" id="exampleModalLabel">Phân công chủ nhiệm</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

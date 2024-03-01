@@ -114,7 +114,8 @@ h5 {
 
 .info-icon,
 .delete-icon,
-.edit-icon {
+.edit-icon,
+.assignment-icon {
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 4px;
@@ -131,4 +132,12 @@ h5 {
 
 .edit-icon {
     color: orange
+}
+
+.assignment-icon {
+    color: rgb(14, 207, 14);
+}
+
+.invalid-error {
+    color: red;
 }

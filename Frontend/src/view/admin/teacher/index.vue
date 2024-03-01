@@ -8,11 +8,12 @@ import userService from "../../../service/user.service";
 import Add from "./add.vue";
 import Info from "./info.vue";
 import Edit from "./edit.vue";
+import Assigment from "./assigment.vue";
 import Table from "../../../components/table/checked.table.vue";
 //js
 import { success } from "../../../assets/js/alert.common";
 export default {
-    components: { Add, Info, Edit, Table },
+    components: { Add, Info, Edit, Assigment, Table },
     setup() {
         const router = useRouter();
         const route = useRoute();
@@ -23,6 +24,7 @@ export default {
         const activeInfo = ref(false);
         const activeEdit = ref(false);
         const activeDelete = ref(false);
+        const activeAssignment = ref(false);
         const update = async () => {
             try {
                 const document = await schoolService.update(data.items["_id"], data.items);
@@ -67,6 +69,21 @@ export default {
                 data.activeData = value;
                 activeEdit.value = !activeEdit.value;
                 router.push({ name: 'editTeacher', query: { _id: data.activeData } });
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
+        }
+        const handeleAssignment = async (value) => {
+            try {
+                console.log(value);
+                data.activeData = value;
+                activeAssignment.value = !activeAssignment.value;
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -130,10 +147,12 @@ export default {
             activeInfo,
             activeEdit,
             activeDelete,
+            activeAssignment,
             // method
             handleInfo,
             handeleDelete,
             handleEdit,
+            handeleAssignment,
             add,
         }
     }
@@ -149,12 +168,14 @@ export default {
         </div>
         <div>
             <Table :data="data.items" :name="'Teacher'" :fields="['Họ và tên', 'SĐT', 'Email']"
-                :titles="['name', 'phone', 'email']" :action="true" :actionList="['info', 'edit', 'delete']" :checked="true"
-                @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
+                :titles="['name', 'phone', 'email']" :action="true" :actionList="['info', 'edit', 'delete', 'assignment']"
+                :checked="true" @info="handleInfo" @edit="handleEdit" @delete="handeleDelete"
+                @assignment="handeleAssignment">
             </Table>
             <Info :_id="data.activeData" v-if="activeInfo" @closeModal="() => { activeInfo = !activeInfo }"></Info>
-
-
+            <Assigment :_id="data.activeData" v-if="activeAssignment"
+                @closeModal="() => { activeAssignment = !activeAssignment }">
+            </Assigment>
             <!-- <Edit :_id="data.activeData" v-if="activeEdit"></Edit> -->
         </div>
     </div>

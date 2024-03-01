@@ -7,7 +7,7 @@ import { formatDateTime } from "../../../assets/js/format.common"
 export default {
     props: { _id: String },
     setup(props, { emit }) {
-        const data = reactive({ item: {} });
+        const data = reactive({ item: { Account: { Permission: { name: "" } } }, });
         const isModalOpen = ref(false);
         const openModal = () => {
             isModalOpen.value = true;
@@ -26,8 +26,8 @@ export default {
 
                 // format date 
                 data.item.birthday = formatDateTime(data.item.birthday);
-                data.item.gender = data.item.gender === true ? 'Nam' : 'Nữ';
-                console.log('d', props._id)
+                data.item.gender = data.item.gender === true ? 'Nữ' : 'Nam';
+                console.log('d', props._id, data.item)
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -67,6 +67,10 @@ export default {
                             <div class="form-group row">
                                 <label for="staticEmail" class="col-sm-2 col-form-label">Họ và tên:</label>
                                 <p class="col-sm-10">{{ data.item.name }}</p>
+                            </div>
+                            <div class="form-group row">
+                                <label for="staticPermission" class="col-sm-2 col-form-label">Vai trò:</label>
+                                <p class="col-sm-10">{{ data.item.Account.Permission.name }}</p>
                             </div>
                             <div class="form-group row">
                                 <label for="staticEmail" class="col-sm-2 col-form-label">Ngày sinh:</label>

@@ -1,21 +1,46 @@
 <script>
-import { ref, onMounted, reactive, defineComponent } from "vue";
+import { onMounted, reactive, onBeforeMount } from "vue";
 import _ from "lodash";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router"
 // services
 import userService from "../../../service/user.service";
+import permissionService from "../../../service/permission.service";
 //component
 import Select from "../../../components/select/dependent.select.vue";
+
+import {
+    checkAddress,
+    checkIdentification,
+    checkMail,
+    checkNumber,
+    checkPhone,
+    checkStringAndNumber,
+    sanitizeInput,
+    checkString,
+} from "../../../assets/js/checkInput.common";
 export default {
     components: { Select },
+
     setup() {
         const router = useRouter();
         const route = useRoute();
         const data = reactive({
-            item: { name: "", birthday: "", gender: "", email: "", phone: "", address: "", positionName: "giáo viên", identification: "", nameCertification: "" },
+            item: { name: "", birthday: "", gender: "", email: "", phone: "", address: "", positionName: "giáo viên", identification: "", nameCertification: "", selectedPermission: "" },
             uploadFiles: [], files: [], uploadAvatar: [], fileAvatar: [],
-            city: []
+            error: {
+                userName: "",
+                identification: "",
+                phone: "",
+                address: "",
+                email: "",
+                birthday: "",
+                sex: "",
+            },
+            city: [],
+            permission: [{ name: "" }],
+
+
         })
         const uploadInput = document.getElementById('imageUpload');
         // uploadInput.addEventListener('click', function () { console.log('up'); })
@@ -46,14 +71,16 @@ export default {
 
                 // Thêm thẻ input vào body của trang web
                 document.body.appendChild(uploadInput);
-
                 uploadInput.click();
-
-
-
                 // })
             } catch (error) {
-
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
             }
         }
         const formFields = ['name',
@@ -63,37 +90,57 @@ export default {
             'address',
             'email',
             'phone',
-            'positionName', 'nameCertification'
+            'positionName', 'nameCertification',
+            'selectedPermission',
         ]
         const save = async () => {
             try {
-                const formData = new FormData();
-                // avatar
-                data.uploadAvatar.push({ name: "" });
-                console.log("AV", data.uploadAvatar);
+                console.log(data.item);
+                for (let key in data.error) {
+                    if (key == "sex") continue;
+                    if (data.item[key] == "") {
+                        data.error[key] = "Chưa nhập thông tin";
+                        data.flag = true;
+                        console.log("key:", key, data.item[key]);
+                    }
+                }
+                if (!data.flag) {
+                    const formData = new FormData();
+                    // avatar
+                    data.uploadAvatar.push({ name: "" });
+                    console.log("AV", data.uploadAvatar);
 
-                _.forEach(data.uploadAvatar, (file) => {
-                    formData.append("avatar", file);
+                    _.forEach(data.uploadAvatar, (file) => {
+                        console.log('file AV:', file);
+                        formData.append("avatar", file);
 
-                });
-                //cccd
-                _.forEach(data.uploadFiles, (file) => {
-                    formData.append("files", file);
-                });
-                _.forEach(formFields, (field) => {
-                    formData.append(field, data.item[field]);
-                });
-                const document = await userService.create(formData);
-                console.log("DOC:", document, document.message['password'])
-                if (document['status'] == 'success') {
-                    router.push({
-                        name: "printAccount", query: {
-                            name: data.item.name, phone: document.message['phone'], password: document.message['password'] // Thay yourData bằng dữ liệu cần truyền
-                        }
                     });
+                    //cccd
+                    _.forEach(data.uploadFiles, (file) => {
+                        console.log('file cccd:', file)
+                        formData.append("files", file);
+                    });
+                    _.forEach(formFields, (field) => {
+                        formData.append(field, data.item[field]);
+                    });
+                    const document = await userService.create(formData);
+                    console.log("DOC:", document, document.message['password'])
+                    if (document['status'] == 'success') {
+                        router.push({
+                            name: "printAccount", query: {
+                                name: data.item.name, phone: document.message['phone'], password: document.message['password'] // Thay yourData bằng dữ liệu cần truyền
+                            }
+                        });
+                    }
                 }
             } catch (error) {
-                console.log("E:", error)
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
             }
         }
         const handleFileUpload = async (event) => {
@@ -303,8 +350,10 @@ export default {
             }
         };
 
-        onMounted(async () => {
+        onBeforeMount(async () => {
             try {
+                const document = await permissionService.getAll();
+                data.permission = document.message;
             } catch (error) {
 
             }
@@ -314,7 +363,17 @@ export default {
             uploadFile,
             handleFileUpload,
             handleFileUploadAvatar,
-            save
+            save,
+
+            //
+            checkAddress,
+            checkIdentification,
+            checkMail,
+            checkNumber,
+            checkPhone,
+            checkStringAndNumber,
+            sanitizeInput,
+            checkString,
         }
     }
 }
@@ -329,17 +388,17 @@ export default {
             <div class="col-6">
                 <!-- Name -->
                 <div class="form-group">
-                    <label for="exampleInputName">Họ và tên: </label>
-                    <input type="text" class="form-control" id="exampleInputName" v-model="data.item.name">
+                    <label for="exampleInputName">Họ và tên ( <span class="text-danger">*</span> ): </label>
+                    <input type="text" class="form-control" id="exampleInputName" v-model="data.item.name" required>
                 </div>
                 <!-- Birthday -->
                 <div class="form-group">
-                    <label for="exampleInputBirthday">Ngày sinh: </label>
-                    <input type="date" class="form-control" id="exampleInputBirthday" v-model="data.item.birthday">
+                    <label for="exampleInputBirthday">Ngày sinh ( <span class="text-danger">*</span> ): </label>
+                    <input type="date" class="form-control" id="exampleInputBirthday" v-model="data.item.birthday" required>
                 </div>
                 <!-- gender -->
                 <div class="form-group">
-                    <label for="exampleInputGender">Giới tính: </label>
+                    <label for="exampleInputGender">Giới tính ( <span class="text-danger">*</span> ): </label>
                     <input type="radio" class="ml-3" id="exampleInputGender" name="gender" value="0"
                         v-model="data.item.gender">Nam
                     <input type="radio" class="ml-3" id="exampleInputGender" name="gender" value="1"
@@ -347,9 +406,21 @@ export default {
                 </div>
                 <!-- identification -->
                 <div class="form-group">
-                    <label for="exampleInputIdentification">Số CCCD: </label>
-                    <input type="text" class="form-control" id="exampleInputIdentification"
-                        v-model="data.item.identification">
+                    <label for="exampleInputIdentification">Số CCCD( <span class="text-danger">*</span> ): </label>
+                    <input type="text" class="form-control" id="exampleInputIdentification" @blur="() => {
+                        if (checkIdentification(data.item.identification)) {
+                            data.flag = true;
+                            data.error.identification = 'CCCD sai định dạng.';
+                        }
+                    }
+                        " @input="() => {
+        data.flag = false;
+        data.error.identification = '';
+    }
+        " v-model="data.item.identification">
+                </div>
+                <div v-if="data.error.identification" class="invalid-error">
+                    {{ data.error.identification }}
                 </div>
             </div>
             <div class="col-6">
@@ -362,25 +433,55 @@ export default {
                 <!-- email -->
                 <div class="form-group">
                     <label for="exampleInputEmail1">Email</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                        v-model="data.item.email">
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" @blur="() => {
+                        if (checkMail(data.item.email)) {
+                            data.flag = true;
+                            data.error.email = 'Email sai định dạng.';
+                        }
+                    }
+                        " @input="() => {
+        data.flag = false;
+        data.error.email = '';
+    }
+        " v-model="data.item.email">
+
+                    <div v-if="data.error.email" class="invalid-error">
+                        {{ data.error.email }}
+                    </div>
                 </div>
                 <!-- phone -->
                 <div class="form-group">
                     <label for="exampleInputPhone">SĐT: </label>
-                    <input type="tel" class="form-control" id="exampleInputPhone" v-model="data.item.phone">
+                    <input type="tel" class="form-control" id="exampleInputPhone" v-model="data.item.phone" @blur="() => {
+                        if (checkPhone(data.item.phone)) {
+                            data.flag = true;
+                            data.error.phone = 'SĐT gồm có 10 số.';
+                        }
+                    }
+                        " @input="() => {
+        data.flag = false;
+        data.error.phone = '';
+    }
+        ">
+                </div>
+                <div v-if="data.error.phone" class="invalid-error">
+                    {{ data.error.phone }}
                 </div>
             </div>
 
 
-            <!-- Vai trò
+            <!-- Vai trò -->
             <div class="form-group">
-                <label for="exampleInputBirthday">Vai trò: </label>
-                <input type="radio" class="form-control" id="exampleInputGender" name="positionName" value="giáo viên">Giáo
-                viên
-                <input type="radio" class="form-control" id="exampleInputGender" name="positionName" value="phụ huynh">Phụ
-                huynh
-            </div> -->
+                <label for="exampleInputPermission">Vai trò( <span class="text-danger">*</span> ): </label>
+
+                <template v-for="(value, index) in data.permission" :key="index">
+                    <input type="radio" class="ml-3" :id="'permission_' + index" :value="value._id"
+                        v-model="data.item.selectedPermission" name="permisionName">
+                    <label :for="'permission_' + index" class="ml-1">{{ value.name }}</label>
+                </template>
+
+
+            </div>
 
             <!-- IMG -->
             <!-- Image cccd-->

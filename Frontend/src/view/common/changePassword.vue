@@ -23,6 +23,7 @@ export default {
         };
         const changePassword = async () => {
             try {
+                console.log(data.item);
                 for (const key in data.item) {
                     if (data.item[key] == "") {
                         data.error[key] = "Chưa nhập mật khẩu";

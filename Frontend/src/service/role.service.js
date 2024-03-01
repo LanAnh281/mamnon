@@ -1,17 +1,18 @@
 import createApiClient from "./api.service";
 
-class loginService {
-    constructor(baseUrl = "/api/grade") {
+class roleService {
+    constructor(baseUrl = "/api/role") {
         this.api = createApiClient(baseUrl);
     }
+
     async getAll() {
         return (await this.api.get("/")).data;
     }
-    async get(id) {
-        return (await this.api.get(`/${id}`)).data;
-    }
     async create(data) {
         return (await this.api.post("/", data)).data;
+    }
+    async get(id) {
+        return (await this.api.get(`/${id}`)).data;
     }
     async update(id, data) {
         return (await this.api.put(`/${id}`, data)).data;
@@ -19,8 +20,6 @@ class loginService {
     async delete(id) {
         return (await this.api.delete(`/${id}`)).data;
     }
-
-
 }
 
-export default new loginService();
+export default new roleService();
