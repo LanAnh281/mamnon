@@ -282,6 +282,22 @@ const receipt = sequelize.define("receipt", {
     type: DataTypes.STRING
   }
 })
+const notification = sequelize.define("notification", {
+  _id: setPrimary,
+  name: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  phone: {
+    type: DataTypes.STRING,
+  },
+  email: {
+    type: DataTypes.STRING,
+  },
+  message: {
+    type: DataTypes.TEXT
+  }
+});
 // checked
 //many-to-many relationship
 Roles.belongsToMany(Permissions, {
@@ -468,6 +484,7 @@ Fee.sync();
 Bill.sync();
 children.sync();
 receipt.sync();
+notification.sync();
 module.exports = {
   Roles,
   Permissions,
@@ -489,5 +506,6 @@ module.exports = {
   Fee,
   Bill,
   children,
-  receipt
+  receipt,
+  notification
 };

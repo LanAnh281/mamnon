@@ -6,8 +6,8 @@ const router = express.Router();
 router
     .route("/")
     .get(
-        authorization.authentication,
-        authorization.authorization("xem danh sách tài khoản"),
+        // authorization.authentication,
+        // authorization.authorization("xem danh sách tài khoản"),
         accounts.findAll
     )
     .post(
@@ -17,18 +17,18 @@ router
         accounts.create
     )
     .put([
-        request.sanitizeDataMiddleware,
+        // request.sanitizeDataMiddleware,
         authorization.authentication,
         authorization.authorization("thay đổi mật khẩu"),
         accounts.updated,
     ]);
-// router
-//     .route("/:id")
-//     // .get(accounts.findOne)
-//     // .delete(accounts.delete)
-//     .put(
-//         authorization.authentication,
-//         authorization.authorization("khóa/mở tài khoản"),
-//         accounts.updatedActive
-//     );
+router
+    .route("/:id")
+    // .get(accounts.findOne)
+    // .delete(accounts.delete)
+    .put(
+        // authorization.authentication,
+        // authorization.authorization("khóa/mở tài khoản"),
+        accounts.updatedActive
+    );
 module.exports = router;

@@ -1,4 +1,4 @@
-const { Permissions } = require("../models/index");
+const { Permissions, Roles } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
     const { name } = req.body;
@@ -16,7 +16,16 @@ exports.create = async (req, res, next) => {
 };
 exports.findAll = async (req, res, next) => {
     try {
-        const documents = await Permissions.findAll({});
+        const documents = await Permissions.findAll({
+            include: [
+                {
+                    model: Roles,
+                    through: {
+                        attributes: [], // Bỏ qua thuộc tính của bảng trung gian (nếu bạn không muốn chúng)
+                    },
+                },
+            ],
+        });
         return res.json({ message: documents, status: "success" });
     } catch (error) {
         console.log(error);

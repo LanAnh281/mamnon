@@ -36,8 +36,9 @@ const classRoomRoute = require("./app/route/classroom.route");
 const programsRoute = require("./app/route/program.route");
 const userRoute = require("./app/route/user.route");
 const loginRoute = require("./app/route/login.route");
-const childrenRoute = require("./app/route/children.route")
-const parentRoute = require("./app/route/parent.route")
+const childrenRoute = require("./app/route/children.route");
+const parentRoute = require("./app/route/parent.route");
+const paypalRoute = require("./app/route/paypal.route");
 // API
 app.use("/static", express.static(path.join(__dirname, "static")));
 server.listen(3000, () => {
@@ -52,16 +53,16 @@ app.get("/", (req, res, next) => {
 });
 
 // handles before https methods
-const convertToLowercase = (req, res, next) => {
-  for (let key in req.body) {
-    if (typeof req.body[key] === "string") {
-      req.body[key] = req.body[key].toLowerCase();
-    }
-  }
-  next();
-};
+// const convertToLowercase = (req, res, next) => {
+//   for (let key in req.body) {
+//     if (typeof req.body[key] === "string") {
+//       req.body[key] = req.body[key].toLowerCase();
+//     }
+//   }
+//   next();
+// };
 
-app.use(convertToLowercase);
+// app.use(convertToLowercase);
 //router
 app.use("/api/accounts", accountRouter);
 app.use("/api/role", roleRouter);
@@ -80,7 +81,7 @@ app.use("/api/user", userRoute);
 app.use("/api/login", loginRoute);
 app.use("/api/children", childrenRoute);
 app.use("/api/parent", parentRoute);
-
+app.use("/api/paypal", paypalRoute);
 // API
 // check errors
 app.use((req, res, next) => {

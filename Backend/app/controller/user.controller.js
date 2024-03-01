@@ -16,17 +16,17 @@ const setPassword = () => {
     return password;
 };
 exports.create = async (req, res, next) => {
-    const { name, birthday, gender, identification, address, email, phone, positionName, nameCertification } = req.body;
+    const { name, birthday, gender, identification, address, email, phone, positionName, nameCertification, selectedPermission } = req.body;
     const { avatar, files } = req.files;
     console.log("File:", req.files)
     console.log("IMG:", avatar[0].filename, files[0].filename, files[1].filename);
     try {
 
-        const permission = await Permissions.findOne({
-            where: {
-                name: positionName
-            }
-        })
+        // const permission = await Permissions.findOne({
+        //     where: {
+        //         name: positionName
+        //     }
+        // })
         const document = await Users.create({
             name: name,
             birthday: birthday,
@@ -54,7 +54,7 @@ exports.create = async (req, res, next) => {
             password: password,
             isActive: true,
             userId: document._id,
-            permissionId: permission._id
+            permissionId: selectedPermission
         })
         console.log("ACC:", newAccount);
         document.dataValues['password'] = newAccount.password;
@@ -80,9 +80,20 @@ exports.findOne = async (req, res, next) => {
             where: {
                 _id: req.params.id,
             },
-            include: {
-                model: certification
-            }
+            include: [{
+                model: certification,
+
+            }, {
+                model: Accounts,
+                include: {
+                    model: Permissions
+                }
+            }]
+            // include: {
+
+            // }
+
+
         });
         return res.json({ message: document, status: "success" });
     } catch (error) {
