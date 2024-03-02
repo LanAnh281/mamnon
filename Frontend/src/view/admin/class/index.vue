@@ -1,5 +1,5 @@
 <script>
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 // service
 import schoolService from "../../../service/school.service";
@@ -10,17 +10,54 @@ import Add from "./add.vue";
 import Info from "./info.vue";
 import Edit from "./edit.vue";
 import Table from "../../../components/table/checked.table.vue";
+import paginationVue from "../../../components/pagination/pagination.vue";
+
 //js
 import { success } from "../../../assets/js/alert.common";
 export default {
-    components: { Add, Info, Edit, Table },
+    components: { Add, Info, Edit, paginationVue, Table },
     setup() {
         const route = useRoute();
         const router = useRouter();
         const data = reactive({
             items: [],
             activeData: '',
+            setPage: [],
+            searchPage: [],
+            currentPage: 1,
+            totalPage: 1,
+            sizePage: 2,
+            length: 0,
+            searchText: ""
         });
+
+
+        data.totalPage = computed(() =>
+            data.searchPage ? Math.ceil(data.searchPage.length / data.sizePage) : 0
+        );
+        data.searchPage = computed(
+            () => (
+                (data.currentPage = 1),
+                data.items
+                    ? data.items.filter((item) =>
+                        item.name
+                            .toLowerCase()
+                            .includes(data.searchText.toLocaleLowerCase())
+                    )
+                    : []
+            )
+        );
+        data.length = computed(() => data.searchPage.length);
+        data.setPage = computed(() =>
+
+            data.searchPage
+                ? data.searchPage.slice(
+                    (data.currentPage - 1) * data.sizePage,
+                    data.currentPage * data.sizePage
+                )
+                : []
+
+        );
         const activeAdd = ref(false);
         const activeInfo = ref(false);
         const activeEdit = ref(false);
@@ -165,13 +202,26 @@ export default {
                 data-target="#addGradeModal">+</button>
         </div>
         <div>
-            <Table :data="data.items" :name="'Class'" :fields="['Tên loại lớp', 'Mô tả', 'Số lớp']"
+            <Table :data="data.setPage" :name="'Grade'" :fields="['Tên loại lớp', 'Mô tả', 'Số lớp']"
                 :titles="['name', 'description', 'classNumber']" :action="true" :actionList="['info', 'edit', 'delete']"
                 :checked="true" @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
             </Table>
             <Add v-if="activeAdd" @add="refresh()"></Add>
             <Info :_id="data.activeData" v-if="activeInfo"></Info>
-            <Edit :_id="data.activeData" v-if="activeEdit"></Edit>
+            <Edit :_id="data.activeData" v-if="activeEdit" @edit="refresh()"></Edit>
+            <!-- pagination -->
+            <paginationVue class="m-0 p-0 mt-1" :currentPage="data.currentPage" :totalPage="data.totalPage"
+                :size="data.sizePage" :length="data.length" @page="(value) => (data.currentPage = value)" @previous="() => {
+                    if (data.currentPage > 1) {
+                        data.currentPage = data.currentPage - 1;
+                    }
+                }
+                    " @next="() => {
+        if (data.currentPage < data.totalPage) {
+            data.currentPage = data.currentPage + 1;
+        }
+    }
+        "></paginationVue>
         </div>
     </div>
 </template>

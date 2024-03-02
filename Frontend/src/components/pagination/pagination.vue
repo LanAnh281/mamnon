@@ -60,12 +60,12 @@ export default {
 
 .disabled .material-symbols-outlined {
     pointer-events: none;
-    color: gray;
+    color: rgb(202, 199, 199);
 }
 
 .isActive {
     color: var(--ruby);
-    text-shadow: 0 0 2px #ffaaaf;
+    text-shadow: 0 0 2px blue;
     font-weight: 500;
 }
 
@@ -75,11 +75,11 @@ export default {
 }
 
 a {
-    color: var(--chocolate);
+    color: blue;
 }
 
 a:hover {
     color: var(--ruby);
-    text-shadow: 0 0 2px #ffaaaf;
+    text-shadow: 0 0 2px #73d7f3;
 }
 </style>

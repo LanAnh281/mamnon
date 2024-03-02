@@ -1,5 +1,5 @@
 <script>
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 //service
 import schoolService from "../../../service/school.service";
@@ -10,21 +10,56 @@ import Info from "./info.vue";
 import Edit from "./edit.vue";
 import Assigment from "./assigment.vue";
 import Table from "../../../components/table/checked.table.vue";
+import paginationVue from "../../../components/pagination/pagination.vue";
 //js
 import { success } from "../../../assets/js/alert.common";
 export default {
-    components: { Add, Info, Edit, Assigment, Table },
+    components: { Add, Info, Edit, Assigment, Table, paginationVue },
     setup() {
         const router = useRouter();
         const route = useRoute();
         const data = reactive({
             items: [],
             activeData: '',
+            setPage: [],
+            searchPage: [],
+            currentPage: 1,
+            totalPage: 1,
+            sizePage: 2,
+            length: 0,
+            searchText: ""
         })
         const activeInfo = ref(false);
         const activeEdit = ref(false);
         const activeDelete = ref(false);
         const activeAssignment = ref(false);
+
+        data.totalPage = computed(() =>
+            data.searchPage ? Math.ceil(data.searchPage.length / data.sizePage) : 0
+        );
+        data.searchPage = computed(
+            () => (
+                (data.currentPage = 1),
+                data.items
+                    ? data.items.filter((item) =>
+                        item.name
+                            .toLowerCase()
+                            .includes(data.searchText.toLocaleLowerCase())
+                    )
+                    : []
+            )
+        );
+        data.length = computed(() => data.searchPage.length);
+        data.setPage = computed(() =>
+
+            data.searchPage
+                ? data.searchPage.slice(
+                    (data.currentPage - 1) * data.sizePage,
+                    data.currentPage * data.sizePage
+                )
+                : []
+
+        );
         const update = async () => {
             try {
                 const document = await schoolService.update(data.items["_id"], data.items);
@@ -160,6 +195,14 @@ export default {
 </script>
 <template>
     <div class="body p-3">
+        <div class="my-2 mx-2 row justify-content-between">
+            <input type="search" placeholder="tìm kiếm theo tên giáo viên" class="p-2 border rounded" style="
+            background-color: var(--background);
+            width: 33%;
+            font-size: 0.9rem;
+            height: 36px;
+          " v-model="data.searchText" />
+        </div>
         <div class="information">
             <h2>Danh sách giáo viên</h2>
             <p class="mx-auto dash"></p>
@@ -167,7 +210,8 @@ export default {
             </router-link>
         </div>
         <div>
-            <Table :data="data.items" :name="'Teacher'" :fields="['Họ và tên', 'SĐT', 'Email']"
+
+            <Table :data="data.setPage" :name="'Teacher'" :fields="['Họ và tên', 'SĐT', 'Email']"
                 :titles="['name', 'phone', 'email']" :action="true" :actionList="['info', 'edit', 'delete', 'assignment']"
                 :checked="true" @info="handleInfo" @edit="handleEdit" @delete="handeleDelete"
                 @assignment="handeleAssignment">
@@ -177,7 +221,22 @@ export default {
                 @closeModal="() => { activeAssignment = !activeAssignment }">
             </Assigment>
             <!-- <Edit :_id="data.activeData" v-if="activeEdit"></Edit> -->
+
+            <!-- pagination -->
+            <paginationVue class="m-0 p-0 mt-1" :currentPage="data.currentPage" :totalPage="data.totalPage"
+                :size="data.sizePage" :length="data.length" @page="(value) => (data.currentPage = value)" @previous="() => {
+                    if (data.currentPage > 1) {
+                        data.currentPage = data.currentPage - 1;
+                    }
+                }
+                    " @next="() => {
+        if (data.currentPage < data.totalPage) {
+            data.currentPage = data.currentPage + 1;
+        }
+    }
+        "></paginationVue>
         </div>
+
     </div>
 </template>
 <style scoped>

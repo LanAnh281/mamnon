@@ -10,7 +10,7 @@ export default {
     setup() {
         const data = reactive({
             items: {
-                name: "", phone: "", email: "", TAXID: "", address: "", clientId: "", secretId: "", logan: "", information: ""
+                _id: "", name: "", phone: "", email: "", TAXID: "", address: "", clientId: "", secretId: "", logan: "", information: ""
             },
             isSchool: false
         })
@@ -149,7 +149,7 @@ export default {
             <div class="float-right mx-3 btn btn-success" @click="add" data-toggle="modal" data-target="#schoolModal">
                 +
             </div>
-            <add v-if="data.isSchool" @closeModal="data.isSchool = !data.isSchool"></add>
+            <add v-if="data.isSchool" @closeModal="data.isSchool = !data.isSchool" :schoolId="data.items['_id']"></add>
 
 
             <div class="row">

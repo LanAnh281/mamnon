@@ -1,7 +1,7 @@
 import createApiClient from "./api.service";
 
 class loginService {
-    constructor(baseUrl = "/api/school") {
+    constructor(baseUrl = "/api/schoolMedia") {
         this.api = createApiClient(baseUrl);
     }
     async getAll() {
@@ -11,7 +11,12 @@ class loginService {
         return (await this.api.get(`/${id}`)).data;
     }
     async create(data) {
-        return (await this.api.post("/", data)).data;
+        return (await this.api.post("/", data, {
+            headers: {
+                "Content-Type": "multipart/form-data", // Đảm bảo định dạng dữ liệu là multipart/form-data
+            },
+        })
+        ).data;
     }
     async update(id, data) {
         return (await this.api.put(`/${id}`, data)).data;
