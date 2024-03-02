@@ -1,14 +1,23 @@
 const { schoolMedia } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
-    const { name } = req.body;
-    console.log("School Body:", req.body);
+    const { schoolId } = req.body;
+    console.log("File:", req.files, req.files.length)
+    // console.log("School Body:", req.body, req.files);
     try {
-        const document = await schoolMedia.create({
-            name: name,
-        });
-        console.log(document);
-        return res.json({ message: document, status: "success" });
+        let flag = false;
+        console.log(req.files.length);
+        for (let i = 0; i < req.files.length; i++) {
+            console.log("Name:", req.files[i].filename);
+            const document = await schoolMedia.create({
+                name: req.files[i].filename,
+                schoolId: schoolId
+            });
+            flag = true;
+        }
+
+        console.log(flag);
+        return res.json({ message: flag, status: "success" });
     } catch (error) {
         console.log(error);
         return next(new ApiError(500, 'An error occurred while creating the media school'))
