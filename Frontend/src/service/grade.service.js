@@ -10,6 +10,9 @@ class loginService {
     async get(id) {
         return (await this.api.get(`/${id}`)).data;
     }
+    async getAllClass(id) {
+        return (await this.api.get(`/class/${id}`)).data;
+    }
     async create(data) {
         return (await this.api.post("/", data)).data;
     }

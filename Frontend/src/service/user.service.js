@@ -18,6 +18,11 @@ class accountService {
             })
         ).data;
     }
+    async createParent(data) {
+        return (
+            await this.api.post("/add/parent", data) ).data;
+       
+    }
     async deleteAll() {
         return (await this.api.delete("/")).data;
     }

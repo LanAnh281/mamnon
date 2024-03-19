@@ -18,6 +18,8 @@ export default {
     const router = useRouter();
     const login = async () => {
       try {
+        console.log(`data:`,data.item);
+
         const document = await Login.login(data.item);
         console.log(`document:`, document);
         if (document['status'] == 'success') {
@@ -31,8 +33,11 @@ export default {
           if (document.permissionName == 'giáo viên') {
             router.push({ name: "school" });
           }
-          else
+          else{
+            console.log('khác: ph or vãng lai');
             router.push({ name: "homepage" });
+          }
+           
         }
         else {
           console.log('dn sai');
