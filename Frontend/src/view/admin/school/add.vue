@@ -25,53 +25,8 @@ export default {
             data.items = {
                 name: "",
             };
-
         };
-        const add = () => {
-            console.log("add");
-
-        };
-        const remove = () => {
-
-            console.log("remove");
-        };
-
-        // const handleFilUpload = async (event) => {
-        //     try {
-        //         const files = event.target.files;
-        //         data.uploadFiles = [...data.uploadFiles, ...files];
-        //         const previewImages = document.getElementById("previewImages");
-        //         previewImages.innerHTML = "";
-        //         const rowImages = document.createElement("div");
-        //         rowImages.classList.add("row");
-        //         for (const file of data.uploadFiles) {
-        //             const reader = new FileReader();
-        //             reader.onload = (e) => {
-        //                 const colImage = document.createElement("div"); colImage.classList.add("col-3", "mt-2");
-        //                 colImage.style.position = "relative";
-        //                 colImage.id = file.name;
-        //                 const img = document.createElement("img");
-        //                 img.src = e.target.result;
-        //                 img.style.maxWidth = "100%";
-        //                 img.style.maxHeight = "100%";
-        //                 img.style.objectFit = "contain";
-        //                 colImage.append(img);
-        //                 rowImages.append(colImage);
-        //                 previewImages.append(rowImages);
-        //             }
-        //             reader.readAsDataURL(file);
-        //         }
-        //     } catch (error) {
-        //         if (error.response) {
-        //             console.log("Server-side errors", error.response.data);
-        //         } else if (error.request) {
-        //             console.log("Client-side errors", error.request);
-        //         } else {
-        //             console.log("Errors:", error.message);
-        //         }
-        //     }
-        // }
-
+       
         const handleFileUpload = async (event) => {
             const allowedTypes = [
                 "image/jpeg",
@@ -191,6 +146,7 @@ export default {
                 console.log("DOC:", document)
                 if (document['status'] == 'success') {
                     console.log('thành công');
+                    emit('add');
                 }
             } catch (error) {
                 if (error.response) {
@@ -210,8 +166,8 @@ export default {
         return {
             data,
             save,
-            add,
-            remove,
+            
+ 
             handleFileUpload
         };
     },

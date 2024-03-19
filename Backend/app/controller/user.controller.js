@@ -9,7 +9,7 @@ const setPassword = () => {
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let password = "";
 
-    for (let i = 0; i < 9; i++) {
+    for (let i = 1; i <= 8; i++) {
         const randomIndex = Math.floor(Math.random() * charset.length);
         password += charset[randomIndex];
     }
@@ -57,6 +57,42 @@ exports.create = async (req, res, next) => {
             permissionId: selectedPermission
         })
         console.log("ACC:", newAccount);
+        document.dataValues['password'] = newAccount.password;
+        return res.json({ message: document, status: "success" });
+    } catch (error) {
+        console.log(error);
+        return next(new ApiError(500, 'An error occurred while creating the role'))
+    }
+};
+exports.createParent = async (req, res, next) => {
+    const { name, birthday, gender, identification, address, email, phone, positionName, nameCertification, selectedPermission } = req.body;
+    try {
+ const permission = await Permissions.findOne({
+            where: {
+                name: 'phụ huynh'
+            }
+        })
+        const document = await Users.create({
+            name: name,
+            birthday: birthday,
+            gender: gender,
+            identification: identification,
+            address: address,
+            email: email,
+            phone: phone,
+            positionName: positionName
+        });
+       
+        // tạo tài khoản
+        let password = setPassword();
+        const newAccount = await Accounts.create({
+            name: phone,
+            password: password,
+            isActive: true,
+            userId: document._id,
+            permissionId: permission["_id"]
+        })
+        console.log("ACC Success", newAccount);
         document.dataValues['password'] = newAccount.password;
         return res.json({ message: document, status: "success" });
     } catch (error) {

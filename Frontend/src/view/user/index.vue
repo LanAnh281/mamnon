@@ -1,16 +1,24 @@
 <script>
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted,onBeforeMount } from "vue";
 // service
 import schoolService from "../../service/school.service";
+import schoolMediaService from "../../service/schoolMedia.service";
+import gradeService from "../../service/grade.service"
 export default {
   components: {},
   setup() {
-    const data = reactive({ items: {} });
-    onMounted(async () => {
+    const data = reactive({ items: {} ,schoolMedia:[],grade:[]});
+    onBeforeMount(async () => {
       try {
+        //INF
         const document = await schoolService.getAll();
-
         data.items = document.message;
+        //IMG
+        const documentSchoolMedia= await schoolMediaService.getAll();
+        data.schoolMedia= documentSchoolMedia.message;
+        //GRADE
+        const documentGrade =await gradeService.getAll();
+        data.grade=documentGrade.message;
       } catch (error) {
         if (error.response) {
           console.log("Server-side errors", error.response.data);
@@ -32,15 +40,15 @@ export default {
     <div id="carouselExampleFade" class="carousel slide carousel-fade " data-ride="carousel">
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img src="../../assets/image/241753796_100611019042258_5317607245526488899_n.jpg" class="d-block w-100"
+          <img :src="`http://localhost:3000/static/images/${data.schoolMedia[0].name}`" class="d-block w-100"
             alt="...">
         </div>
         <div class="carousel-item">
-          <img src="../../assets/image/292301365_175871391516220_3922383153984952461_n.jpg" class="d-block w-100"
+          <img :src="`http://localhost:3000/static/images/${data.schoolMedia[1].name}`" class="d-block w-100"
             alt="...">
         </div>
         <div class="carousel-item">
-          <img src="../../assets/image/292542366_162806212927398_6084405115164366378_n.jpg" class="d-block w-100"
+          <img :src="`http://localhost:3000/static/images/${data.schoolMedia[2].name}`" class="d-block w-100"
             alt="...">
         </div>
       </div>
@@ -67,32 +75,14 @@ export default {
       <!--  -->
       <div class="col-12 row classroom justify-content-center">
         <h2 class="col-12 text-center">chương trình học</h2>
-        <div class="col-3 classroom-item">
-          <img src="../../assets/image/background.jpg" alt="lớp mầm" class="img-fluid">
-          <h6>Tên lớp</h6>
-          <p>Dành cho bé 3-4 tuổi</p>
-          <router-link :to="{ name: 'detailStudy' }">Chi tiết</router-link>
-        </div>
-        <div class="col-3 classroom-item">
-          <img src="../../assets/image/background.jpg" alt="lớp mầm" class="img-fluid">
-          <h6>Tên lớp</h6>
-          <p>Dành cho bé 3-4 tuổi</p>
-          <router-link :to="{ name: 'detailStudy' }">Chi tiết</router-link>
+    
+        <div class="col-4 classroom-item" v-for="(value,index) in data.grade" :key="index">
+          <img src="../../assets/image/lophoc.jpg" alt="lớp mầm" class="img-fluid" v-if="index%2==0">
+          <img src="../../assets/image/lophoc2.jpeg" alt="lớp mầm" class="img-fluid" v-else>
 
-        </div>
-        <div class="col-3 classroom-item">
-          <img src="../../assets/image/background.jpg" alt="lớp mầm" class="img-fluid">
-          <h6>Tên lớp</h6>
-          <p>Dành cho bé 3-4 tuổi</p>
-          <router-link :to="{ name: 'detailStudy' }">Chi tiết</router-link>
-
-        </div>
-        <div class="col-3 classroom-item">
-          <img src="../../assets/image/background.jpg" alt="lớp mầm" class="img-fluid">
-          <h6>Tên lớp</h6>
-          <p>Dành cho bé 3-4 tuổi</p>
-          <router-link :to="{ name: 'detailStudy' }">Chi tiết</router-link>
-
+          <h5 class="text-light py-2">{{ value.name }}</h5>
+          <p class="text-light">{{ value.description }}</p>
+          <!-- <router-link :to="{ name: 'detailStudy' }">Chi tiết</router-link> -->
         </div>
       </div>
 
@@ -101,22 +91,9 @@ export default {
     <div>
       <div class="row  actives">
         <h2 class="col-12">Hoạt động</h2>
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_RkpyFG8a7JmyLmGlzyKzwM9Lf64tKYJcVA&usqp=CAU"
-          alt="" class="col-3 mb-5">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_RkpyFG8a7JmyLmGlzyKzwM9Lf64tKYJcVA&usqp=CAU"
-          alt="" class="col-3 mb-3">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_RkpyFG8a7JmyLmGlzyKzwM9Lf64tKYJcVA&usqp=CAU"
-          alt="" class="col-3 mb-5">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_RkpyFG8a7JmyLmGlzyKzwM9Lf64tKYJcVA&usqp=CAU"
-          alt="" class="col-3 mb-3">
-
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_RkpyFG8a7JmyLmGlzyKzwM9Lf64tKYJcVA&usqp=CAU"
-          alt="" class="col-3 mb-3">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_RkpyFG8a7JmyLmGlzyKzwM9Lf64tKYJcVA&usqp=CAU"
-          alt="" class="col-3 mb-5">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_RkpyFG8a7JmyLmGlzyKzwM9Lf64tKYJcVA&usqp=CAU"
-          alt="" class="col-3 mb-3">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_RkpyFG8a7JmyLmGlzyKzwM9Lf64tKYJcVA&usqp=CAU"
+        <img 
+        v-for="(value,index) in data.schoolMedia" :key="index"
+        :src="`http://localhost:3000/static/images/${value.name}`"
           alt="" class="col-3 mb-5">
       </div>
     </div>

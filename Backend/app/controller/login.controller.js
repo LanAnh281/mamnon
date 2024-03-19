@@ -36,6 +36,7 @@ exports.login = async (req, res, next) => {
                 password: password
             }
         });
+        console.log(document);
         if (!document) {
             return res.json({ message: "fail", status: "fail" });
         }
@@ -65,6 +66,7 @@ exports.login = async (req, res, next) => {
                 },
                 { where: { _id: document["_id"] } }
             );
+            console.log(updated);
             //set cookie at client-side
             res.cookie("refreshToken", refreshToken, {
                 expires: refreshTokenExprityTime.toDate(), //
@@ -72,27 +74,31 @@ exports.login = async (req, res, next) => {
                 secure: true,
             });
             //jwt
-            const expiresInMinutes = 3; // Thời gian tồn tại của JWT (vd: 1 phút)
+            const expiresInMinutes = 3; // Thời gian tồn tại của JWT (vd: 3 giờ)
             const expiryTime = moment().add(expiresInMinutes, "hours");
-            jwt.sign(
+           const data= jwt.sign(
                 {
                     _id: document["_id"],
                     userId: document["userId"],
                     permission: permission,
                     exp: expiryTime.unix(),
                 },
-                secret,
-                function (err, data) {
-                    return res.send({
+                secret
+            );
+            
+          console.log(data,permission,documentUser["name"],expiryTime);
+                    return  res.json({
                         message: "success",
                         status: "success",
                         token: data,
                         permissionName: permission["name"],
-                        userName: documentUser["userName"],
+                        userName: documentUser["name"],
                         expiresIn: expiryTime,
                     });
-                }
-            );
+                
+            console.log('ss',document);
+                return res.json({message:'success',status:"success"})
+
         } else {
             return res.json({ message: "fail", status: "fail" });
         }

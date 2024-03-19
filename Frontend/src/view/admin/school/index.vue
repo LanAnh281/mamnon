@@ -5,6 +5,7 @@ import schoolService from "../../../service/school.service";
 import add from "./add.vue";
 //js
 import { success } from "../../../assets/js/alert.common";
+import schoolMediaService from "../../../service/schoolMedia.service";
 export default {
     components: { add },
     setup() {
@@ -12,7 +13,9 @@ export default {
             items: {
                 _id: "", name: "", phone: "", email: "", TAXID: "", address: "", clientId: "", secretId: "", logan: "", information: ""
             },
-            isSchool: false
+            isSchool: false,
+            schoolMedia:[],
+            removeImage:[]
         })
         const update = async () => {
             try {
@@ -44,9 +47,32 @@ export default {
                 }
             }
         }
-        const deleteImg = async () => {
+        const deleteImg = async (id) => {
             try {
-                console.log('de');
+                // data.removeImage.push(id);
+                const schoolMediaElement = document.getElementById(id);
+                if (schoolMediaElement) {
+                    schoolMediaElement.remove();
+                }
+                console.log(schoolMediaElement);
+                const documentDeleteMedia= await schoolMediaService.delete(id);
+                console.log("doc:",documentDeleteMedia);
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
+        }
+        const refresh =async()=>{
+            try {
+                const document = await schoolService.getAll();
+                data.items = document.message;
+                const documentMedia= await schoolMediaService.getAll();
+                data.schoolMedia= documentMedia.message;
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -58,22 +84,14 @@ export default {
             }
         }
         onMounted(async () => {
-            try {
-                const document = await schoolService.getAll();
-                data.items = document.message;
-
-            } catch (error) {
-                if (error.response) {
-                    console.log("Server-side errors", error.response.data);
-                } else if (error.request) {
-                    console.log("Client-side errors", error.request);
-                } else {
-                    console.log("Errors:", error.message);
-                }
-            }
+           await refresh();
         })
-        return {
-            data, update, deleteImg, add
+        return {           
+            // data
+            data,
+            //method
+            refresh,
+            update, deleteImg, add,
         }
     }
 }
@@ -149,14 +167,17 @@ export default {
             <div class="float-right mx-3 btn btn-success" @click="add" data-toggle="modal" data-target="#schoolModal">
                 +
             </div>
-            <add v-if="data.isSchool" @closeModal="data.isSchool = !data.isSchool" :schoolId="data.items['_id']"></add>
+            <add v-if="data.isSchool" @closeModal="data.isSchool = !data.isSchool" :schoolId="data.items['_id']" @add="refresh()"></add>
 
 
             <div class="row">
-                <div class="col-4 img-school">
-                    <img src=https://bcp.cdnchinhphu.vn/334894974524682240/2022/10/3/999999999-16647800140172071804579.jpg
+                <div class="col-4 img-school" v-for="(value,index) in data.schoolMedia" :key="index" :id="`${value._id}`">
+                    <!-- <img src=https://bcp.cdnchinhphu.vn/334894974524682240/2022/10/3/999999999-16647800140172071804579.jpg
                         alt="ảnh trường mầm non" class="d-block img-fluid ">
-                    <span class="delete-school-img" @click="deleteImg">x</span>
+                    <span class="delete-school-img" @click="deleteImg">x</span> --> 
+                    <img :src='`http://localhost:3000/static/images/${value.name}`'
+                        alt="ảnh trường mầm non" class="d-block img-fluid ">
+                    <span class="delete-school-img" @click="deleteImg(value._id)">x</span>
                 </div>
             </div>
         </div>

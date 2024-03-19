@@ -9,4 +9,6 @@ router.route("/:id")
     .get(grade.findOne)
     .put(grade.updated)
     .delete(grade.delete);
+router.route("/class/:id")
+    .get(grade.findAllClass);
 module.exports = router;

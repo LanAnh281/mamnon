@@ -1,13 +1,40 @@
 <script>
 import { reactive, onMounted } from 'vue';
+//
+import {checkPhone,checkMail,checkString} from "../../assets/js/checkInput.common"
 // service
 import schoolService from '../../service/school.service';
 export default {
     setup() {
-        const data = reactive({ item: {}, school: {} });
+        const data = reactive({ 
+            item: {name:"",phone:"",email:"",message:""}, 
+            school: {},
+            error: {
+                name:"",
+                phone: "",
+                email: "",
+                message:""
+            },
+            flag:false,
+     });
+     const formFields = ['name',
+            'email',
+            'phone',
+            'message'
+        ]
         const save = async () => {
             try {
-                console.log('data.item:', data.item)
+                
+                for (let key in data.error) {
+                    if (key == "sex") continue;
+                    if (data.item[key] == "") {
+                        data.error[key] = "Chưa nhập thông tin";
+                        data.flag = true;
+                        console.log("key:", key, data.item[key]);
+                    }
+                }
+                if (!data.flag) {
+                console.log('data.item:', data.item)}
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -48,7 +75,9 @@ export default {
         })
         return {
             data,
-            save
+            save,
+            checkMail,
+            checkPhone,checkString
         }
     }
 }
@@ -73,23 +102,65 @@ export default {
                         <label for="inputName" class="col-sm-2 col-form-label p-0">Họ và tên <sup
                                 class="text-danger">(*)</sup></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="inputName" v-model="data.item.name" />
+                            <input type="text" class="form-control" id="inputName" v-model="data.item.name" 
+                            @blur="() => {
+                            if (checkString(data.item.phone)) {
+                            data.flag = true;
+                            data.error.name = 'Họ và tên là chữ.';
+                                }
+                            }
+                            " @input="() => {
+                                data.flag = false;
+                                data.error.name = '';
+                            }
+                            ">
+                            <div v-if="data.error.name" class="invalid-error">
+                    {{ data.error.name }}
+                </div>
+                       
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputPhone" class="col-sm-2 col-form-label p-0">SĐT <sup
                                 class="text-danger">(*)</sup></label>
                         <div class="col-sm-10">
-                            <input type="tel" class="form-control" id="inputPhone" v-model="data.item.phone" />
-
+                            <input type="tel" class="form-control" id="inputPhone" 
+                            v-model="data.item.phone"  
+                            @blur="() => {
+                            if (checkPhone(data.item.phone)) {
+                            data.flag = true;
+                            data.error.phone = 'SĐT gồm có 10 số.';
+                                }
+                            }
+                            " @input="() => {
+                                data.flag = false;
+                                data.error.phone = '';
+                            }
+                            ">
+                            <div v-if="data.error.phone" class="invalid-error">
+                    {{ data.error.phone }}
+                </div>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="inputroom" class="col-sm-2 col-form-label p-0">Email <sup
                                 class="text-danger">(*)</sup></label>
                         <div class="col-sm-10">
-                            <input type="email" class="form-control" id="inputroom" v-model="data.item.email" />
-
+                            <input type="email" class="form-control" id="inputroom" v-model="data.item.email" @blur="() => {
+                            if (checkPhone(data.item.phone)) {
+                            data.flag = true;
+                            data.error.phone = 'SĐT gồm có 10 số.';
+                                }
+                            }
+                            " @input="() => {
+                                data.flag = false;
+                                data.error.phone = '';
+                            }
+                            ">
+                            <div v-if="data.error.phone" class="invalid-error">
+                    {{ data.error.phone }}
+                </div>
+                        
                         </div>
                     </div>
                     <div class="form-group row">
@@ -97,7 +168,21 @@ export default {
                                 class="text-danger">(*)</sup></label>
                         <div class="col-sm-10">
                             <textarea type="text" class="form-control" id="inputContent" rows="8"
-                                v-model="data.item.message"></textarea>
+                                v-model="data.item.message" @blur="() => {
+                            if (checkPhone(data.item.phone)) {
+                            data.flag = true;
+                            data.error.description = 'Tin nhắn.';
+                                }
+                            }
+                            " @input="() => {
+                                data.flag = false;
+                                data.error.phone = '';
+                            }
+                            ">
+                            <div v-if="data.error.phone" class="invalid-error">
+                    {{ data.error.phone }}
+                </div>
+                        </div></textarea>
                         </div>
                     </div>
                     <div class="form-group row justify-content-around mb-0 ">

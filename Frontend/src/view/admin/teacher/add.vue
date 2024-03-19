@@ -124,7 +124,6 @@ export default {
                         formData.append(field, data.item[field]);
                     });
                     const document = await userService.create(formData);
-                    console.log("DOC:", document, document.message['password'])
                     if (document['status'] == 'success') {
                         router.push({
                             name: "printAccount", query: {

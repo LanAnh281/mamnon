@@ -45,6 +45,20 @@ exports.findOne = async (req, res, next) => {
         return next(new ApiError(500, 'An error occurred while finding  the role'))
     }
 };
+exports.findAllClass = async (req, res, next) => {
+    try {
+        console.log("params:",req.params.id);
+        const document = await classRoom.findAll({
+            where: {
+                gradeId: req.params.id,
+            },
+        });
+        return res.json({ message: document, status: "success" });
+    } catch (error) {
+        console.log(error);
+        return next(new ApiError(500, 'An error occurred while finding  the role'))
+    }
+};
 exports.updated = async (req, res, next) => {
     const { name, description } = req.body;
     console.log("Update grade", req.body);

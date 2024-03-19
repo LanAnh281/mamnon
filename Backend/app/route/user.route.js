@@ -19,4 +19,7 @@ router.route("/:id")
     ]), user.updated)
     .delete(user.delete);
 router.route("/getImg/:id").get(user.getImg);
+router.route("/add/parent")
+    .post( user.createParent);
+       
 module.exports = router;

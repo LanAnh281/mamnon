@@ -1,18 +1,23 @@
 <script>
 import { reactive, onMounted } from "vue";
 import schoolService from "../../service/school.service";
+import schoolMediaService from "../../service/schoolMedia.service";
+
 export default {
     components: {},
     setup() {
         const data = reactive({
             items: {
-
-            }
+            },
+            schoolMedia:[],
         })
         onMounted(async () => {
             try {
                 const document = await schoolService.getAll();
                 data.items = document.message;
+                //
+                const documentSchoolMedia= await schoolMediaService.getAll();
+                data.schoolMedia= documentSchoolMedia.message;
             } catch (error) {
 
             }
@@ -42,7 +47,7 @@ export default {
         <div class="post col-12">
             <h1 class="">Trường mầm non {{ data.items['name'] }}</h1>
             <p>{{ data.items['information'] }}</p>
-            <img src="https://cdn.lawnet.vn/uploads/tintuc/2022/12/16/truong-mam-non.jpg" alt="ảnh trường mầm non"
+            <img :src="`http://localhost:3000/static/images/${data.schoolMedia[0].name}`" alt="ảnh trường mầm non"
                 class="img-fluid mx-auto d-block">
         </div>
 
