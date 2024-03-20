@@ -3,10 +3,13 @@ import { ref, onMounted, reactive, defineComponent } from "vue";
 import _ from "lodash";
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router"
+//js
+import { checkString,checkPhone,checkAddress,checkMail,checkIdentification } from "../../../assets/js/checkInput.common";
 // services
 import userService from "../../../service/user.service";
 import gradeService from "../../../service/grade.service";
 import classService from "../../../service/class.service";
+import childrenService from "../../../service/children.service"
 //component
 import Select from "../../../components/select/dependent.select.vue";
 export default {
@@ -20,17 +23,34 @@ export default {
             class:[{name:""}],
             gradeChoose:"",
             classChoose:"",
+            error:{
+                name:"",
+                phone:"",
+                address:"",
+                email:""
+            },
+            flag:false
         });
         const children = reactive({ items: [] })
         const save = async () => {
             try {
+                if(!data.flag){
                 // tạo tài khoản cho phụ huynh
                 const document= await userService.createParent(data.item);
                 console.log('Tài khoản:',document);
                 children.items[0].userId= document.message._id;
                 // mã phụ huynh và mã lớp (nếu có) theo từng học sinh
                 console.log("Thông tin:",data.item,children.items);
-
+                for(let i=0;i<children.items.length;i++){
+                    children.items[i].userId= document.message._id;
+                    const documentChildren= await childrenService.create(children.items[i]);
+                    console.log("DOC children:",documentChildren);
+                    }
+                }
+                else{
+                    console.log('Lỗi')
+                }
+                
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -49,7 +69,7 @@ export default {
                 data.grades = documentGrade.message;
                 console.log(documentGrade.message);
                 for (let i = 0; i < data.item.numberChildren; i++) {
-                    children.items.push({ name: "", birthday: "", gender: "", classRoomId: "", grade:documentGrade.message });
+                    children.items.push({ name: "", birthday: "", gender: "", relationship:"",classRoomId: "", grade:documentGrade.message });
                 }
                 console.log(children.items[0].grade);
             } catch (error) {
@@ -95,8 +115,6 @@ export default {
         }
         onMounted(async () => {
             try {
-              
-
             
             } catch (error) {
                 if (error.response) {
@@ -113,7 +131,12 @@ export default {
             save,
             handleChildren,
             handleGrade,
-            handleClass
+            handleClass,
+            checkString,
+            checkPhone,
+            checkAddress,
+            checkMail,
+            checkIdentification
         }
     }
 }
@@ -128,7 +151,23 @@ export default {
                 <!-- Name -->
                 <div class="form-group">
                     <label for="exampleInputName">Họ và tên: </label>
-                    <input type="text" class="form-control" id="exampleInputName" v-model="data.item.name">
+                    <input type="text" class="form-control" id="exampleInputName" v-model="data.item.name"
+                    required
+                    @blur="() => {
+                        if (checkString(data.item.name)) {
+                            data.flag = true;
+                            data.error.name = 'Họ tên không gồm ký tự đặc biệt';
+                        }
+                    }
+                        " @input="() => {
+                            data.flag = false;
+                            data.error.phone = '';
+                        }
+                        "
+                    >
+                    <div v-if="data.error.name" class="invalid-error">
+                    {{ data.error.name }}
+                </div>
                 </div>
                 <!-- Birthday -->
                 <div class="form-group">
@@ -167,7 +206,20 @@ export default {
                 <!-- phone -->
                 <div class="form-group">
                     <label for="exampleInputPhone">SĐT: </label>
-                    <input type="tel" class="form-control" id="exampleInputPhone" v-model="data.item.phone">
+                    <input type="tel" class="form-control" id="exampleInputPhone" v-model="data.item.phone" @blur="() => {
+                        if (checkPhone(data.item.phone)) {
+                            data.flag = true;
+                            data.error.phone = 'SĐT gồm có 10 số.';
+                        }
+                    }
+                        " @input="() => {
+                            data.flag = false;
+                            data.error.phone = '';
+                        }
+                        ">
+                </div>
+                <div v-if="data.error.phone" class="invalid-error">
+                    {{ data.error.phone }}
                 </div>
 
             </div>
@@ -180,7 +232,7 @@ export default {
                 <div v-for="(value, index) in children.items" :key="index">
                     <h6 class="text-primary">Thông tin trẻ thứ {{ index + 1 }}</h6>
                     <div class="form-group">
-                        <label for="exampleInputPhone">Tên trẻ: </label>
+                        <label for="exampleInputPhone">Họ và tên trẻ: </label>
                         <input type="text" class="form-control" v-model="children.items[index].name">
                     </div>
                     <div class="form-group">
@@ -199,17 +251,18 @@ export default {
                         <input type="text" class="form-control" v-model="children.items[index].relationship">
                     </div>
                     <!-- Loại lớp -->
-                    <div class="form-group">
-                        <label for="cars">Loại lớp :</label>
-                        <select name="grade" id="grade" class="form-control"   @change="handleGrade(index, $event)">
-                            <option value="Chọn loại lớp">--Chọn loại lớp-- </option>
-                            <option v-for="(grade, index1) in children.items[index].grade" :key="index1" :value="grade._id">
-                                {{ grade.name }}</option>
-                        </select>
-                    </div>
+                    <div class="row ">
+                        <div class="form-group col-6">
+                            <label for="cars">Loại lớp :</label>
+                            <select name="grade" id="grade" class="form-control"   @change="handleGrade(index, $event)">
+                                <option value="Chọn loại lớp">--Chọn loại lớp-- </option>
+                                <option v-for="(grade, index1) in children.items[index].grade" :key="index1" :value="grade._id">
+                                    {{ grade.name }}</option>
+                            </select>
+                        </div>
                     <!-- Lớp -->
                     <!-- {{ data.class }} -->
-                    <div class="form-group">
+                    <div class="form-group col-6">
                         <label for="cars">Lớp :</label>
                         <select name="cars" id="cars" class="form-control"  @change="handleClass(index, $event)">
                             <option value="Chọn lớp">--Chọn lớp--</option>
@@ -217,6 +270,9 @@ export default {
                                 {{ cla.name }}</option>
                         </select>
                     </div>
+                    </div>
+                    
+                    
 
 
                 </div>

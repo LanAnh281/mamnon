@@ -20,7 +20,7 @@ class accountService {
     }
     async createParent(data) {
         return (
-            await this.api.post("/add/parent", data) ).data;
+            await this.api.post("/parent/children", data) ).data;
        
     }
     async deleteAll() {
@@ -28,6 +28,9 @@ class accountService {
     }
     async get(id) {
         return (await this.api.get(`/${id}`)).data;
+    }
+    async getParent(id) {
+        return (await this.api.get(`/parent/children/${id}`)).data;
     }
     async update(id, data) {
         return (await this.api.put(`/${id}`, data, {

@@ -8,7 +8,7 @@ import Info from "./info.vue";
 import Edit from "./edit.vue";
 import Table from "../../../components/table/checked.table.vue";
 //js
-import { success } from "../../../assets/js/alert.common";
+import { success ,deleted} from "../../../assets/js/alert.common";
 export default {
     components: { Add, Info, Edit, Table },
     setup() {
@@ -38,17 +38,29 @@ export default {
         const handleInfo = async (value) => {
             try {
                 data.activeData = value;
-                activeInfo.value = !activeDelete.value;
+                activeInfo.value = !activeInfo.value;
             } catch (error) {
-
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
             }
         }
         const handeleDelete = async (value) => {
             try {
                 data.activeData = value;
-                const document = await userService.delete(data.activeData);
+              const isDeleted= await deleted('Xóa phụ huynh','Bạn có chắc chắn xóa. Nếu xóa phụ huynh thông tin trẻ sẽ mất.')
+              if(isDeleted==true){
+                 const document = await userService.delete(data.activeData);
                 console.log('de:', document);
                 await refresh();
+              }  else{
+                console.log('không xóa');
+              }
+             
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);

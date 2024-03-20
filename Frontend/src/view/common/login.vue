@@ -30,11 +30,11 @@ export default {
           );
           // setCookie("token", document.token, 10); //1 ngày
           // setCookie("permission", document.permissionName, 10);
-          if (document.permissionName == 'giáo viên') {
+          if (document.permissionName == 'giáo viên' ||document.permissionName == 'phụ huynh'  ) {
             router.push({ name: "school" });
           }
           else{
-            console.log('khác: ph or vãng lai');
+            console.log('khác:vãng lai');
             router.push({ name: "homepage" });
           }
            

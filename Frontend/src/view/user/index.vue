@@ -40,17 +40,17 @@ export default {
     <div id="carouselExampleFade" class="carousel slide carousel-fade " data-ride="carousel">
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img :src="`http://localhost:3000/static/images/${data.schoolMedia[0].name}`" class="d-block w-100"
-            alt="...">
+           <img :src="`http://localhost:3000/static/images/${data.schoolMedia[0].name}`" class="d-block w-100"
+            alt="..."> 
         </div>
         <div class="carousel-item">
           <img :src="`http://localhost:3000/static/images/${data.schoolMedia[1].name}`" class="d-block w-100"
             alt="...">
-        </div>
-        <div class="carousel-item">
+        </div> 
+         <div class="carousel-item">
           <img :src="`http://localhost:3000/static/images/${data.schoolMedia[2].name}`" class="d-block w-100"
             alt="...">
-        </div>
+        </div> 
       </div>
       <button class="carousel-control-prev" type="button" data-target="#carouselExampleFade" data-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
