@@ -270,8 +270,10 @@ const children = sequelize.define("children", {
   },
   active: {
     type: DataTypes.BOOLEAN
+  },
+  relationship:{
+    type: DataTypes.STRING
   }
-
 })
 const receipt = sequelize.define("receipt", {
   _id: setPrimary,

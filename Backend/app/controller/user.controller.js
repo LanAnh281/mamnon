@@ -1,4 +1,4 @@
-const { Users, certification, Accounts, Permissions, daily } = require("../models/index");
+const { Users, certification, Accounts, Permissions, daily, children } = require("../models/index");
 const ApiError = require("../api-error");
 const fs = require("fs");
 const path = require("path");
@@ -135,6 +135,24 @@ exports.findOne = async (req, res, next) => {
     } catch (error) {
         console.log(error);
         return next(new ApiError(500, 'An error occurred while finding  the role'))
+    }
+};
+exports.findParent = async (req, res, next) => {
+    try {
+        console.log(req.params.id);
+        const document = await Users.findOne({
+            where: {
+                _id: req.params.id,
+            },
+            include: [{
+                model: children,
+
+            }]
+        });
+        return res.json({ message: document, status: "success" });
+    } catch (error) {
+        console.log(error);
+        return next(new ApiError(500, 'An error occurred while finding  children of a parent'))
     }
 };
 exports.updated = async (req, res, next) => {

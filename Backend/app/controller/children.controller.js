@@ -1,11 +1,19 @@
 const { children } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
-    const { name, birthday, gender, classRoomId, userId } = req.body;
+    const { name, birthday, gender,oldBMI, newBMI,  classRoomId, userId,relationship } = req.body;
     console.log("children Body:", req.body);
     try {
         const document = await children.create({
-            name: name, birthday: birthday, gender: gender, classRoomId: classRoomId, userId: userId
+            name: name,
+            birthday: birthday,
+            gender: gender, 
+            classRoomId: classRoomId, 
+            userId: userId,
+            oldBMI:'',
+            newBMI:'',
+            relationship:relationship,
+            active:true,
         });
         console.log(document);
         return res.json({ message: document, status: "success" });
