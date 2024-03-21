@@ -10,12 +10,12 @@ export default {
         actionList: { type: Array, default: [] },
         name: { type: String, default: "" },
         checked: { type: Boolean, default: false },
-
     },
-    setup(props, emit) {
+    setup(props, {emit}) {
 
         onMounted(async () => {
             try {
+                console.log("PROPS TABLE CHECKED:",props.data);
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);

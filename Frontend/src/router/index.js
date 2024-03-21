@@ -66,9 +66,14 @@ const routes = [
     component: () => import("../view/admin/parents/index.vue"),
   },
   {
-    path: "/admin/addParents",
+    path: "/admin/addParent",
     name: "addParent",
     component: () => import("../view/admin/parents/add.vue"),
+  },
+  {
+    path: "/admin/editParent",
+    name: "editParent",
+    component: () => import("../view/admin/parents/edit.vue"),
   },
   //menu
   {

@@ -21,7 +21,7 @@ export default {
             item: { name: "", birthday: "", gender: "", email: "", phone: "", address: "", positionName: "phụ huynh", identification: "", nameCertification: "", numberChildren: 0 },
             grades: [{ name: "" }],
             class:[{name:""}],
-            gradeChoose:"",
+            gradeId:"",
             classChoose:"",
             error:{
                 name:"",
@@ -84,7 +84,7 @@ export default {
         }
         const handleGrade =async(index,e)=>{
             try {
-                children.items[index].gradeChoose=e.target.value;
+                children.items[index].gradeId=e.target.value;
                 const documentClass= await gradeService.getAllClass(e.target.value);
                 children.items[index].class=documentClass.message
                 // data.class= documentClass.message;

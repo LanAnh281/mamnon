@@ -1,5 +1,8 @@
 <script>
 import { reactive, ref, onMounted } from "vue";
+import {useRoute,useRouter} from "vue-router"
+//
+
 import schoolService from "../../../service/school.service";
 import userService from "../../../service/user.service";
 //component
@@ -12,10 +15,12 @@ import { success ,deleted} from "../../../assets/js/alert.common";
 export default {
     components: { Add, Info, Edit, Table },
     setup() {
+        const router=useRouter();
+        const route= useRoute();
         const data = reactive({
             items: [],
             activeData: '',
-        })
+        });
         const activeInfo = ref(false);
         const activeEdit = ref(false);
         const activeDelete = ref(false);
@@ -75,6 +80,7 @@ export default {
             try {
                 data.activeData = value;
                 activeEdit.value = !activeEdit.value;
+                router.push({name:'editParent',query:{_id:value}})
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -156,7 +162,7 @@ export default {
                 @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
             </Table>
             <Info :_id="data.activeData" v-if="activeInfo"></Info>
-            <Edit :_id="data.activeData" v-if="activeEdit"></Edit>
+            <!-- <Edit :_id="data.activeData" v-if="activeEdit"></Edit> -->
         </div>
     </div>
 </template>

@@ -1,5 +1,5 @@
 <script>
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted,computed,watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 // service
 import userService from "../../../service/user.service";
@@ -10,14 +10,16 @@ import childrenService from "../../../service/children.service"
 import { formatDateTime } from "../../../assets/js/format.common"
 //component
 import Table from "../../../components/table/checked.table.vue";
+import paginationVue from "../../../components/pagination/pagination.vue";
 
 export default {
-    components: { Table },
+    components: { Table,paginationVue },
     props: { _id: String },
-    setup(props, emit) {
+    setup(props, {emit}) {
         const router = useRouter();
         const route = useRoute();
         const isModalOpen = ref(false);
+
         const openModal = () => {
             isModalOpen.value = true;
             console.log("open modal info user");
@@ -31,9 +33,43 @@ export default {
             class: {
 
             },
-            items: { name: "", birthday: "", gender: "" },
-            active: ""
+            items: [{ name: "", birthday: "", gender: "" }],
+            active: "",
+            setPage: [],
+            searchPage: [],
+            currentPage: 1,
+            totalPage: 1,
+            sizePage: 1,
+            length: 0,
+            searchText: ""
         });
+        data.totalPage = computed(() =>
+            data.searchPage ? Math.ceil(data.searchPage.length / data.sizePage) : 0
+        );
+        data.searchPage = computed(
+            () => (
+                (data.currentPage = 1),
+                data.items
+                    ? data.items.filter((item) =>
+                        item.name
+                            .toLowerCase()
+                            .includes(data.searchText.toLocaleLowerCase())
+                    )
+                    : []
+            )
+        );
+        data.length = computed(() => data.searchPage.length);
+        data.setPage = computed(() =>
+
+            data.searchPage
+                ? data.searchPage.slice(
+                    (data.currentPage - 1) * data.sizePage,
+                    data.currentPage * data.sizePage
+                )
+                : []
+
+        );
+
         const handleActive = async (value) => {
             try {
                 data.class = data.class.map((item) => {
@@ -110,11 +146,31 @@ export default {
                 }
             }
         }
+        const refresh=async()=>{
+            try {
+                const document = await childrenService.getAllChildren(data.active);
+                data.items = document.message;
+                data.items=data.items.map((item)=>{
+                    return{
+                        ...item,
+                        birthday:formatDateTime(item.birthday),
+                        gender: item.gender ? 'Nữ' : 'Nam'
+                    }
+                })
+            } catch (error) {
+                if (error.response) {
+                    console.log("Server-side errors", error.response.data);
+                } else if (error.request) {
+                    console.log("Client-side errors", error.request);
+                } else {
+                    console.log("Errors:", error.message);
+                }
+            }
+        }
         onMounted(async () => {
             try {
                 $("#infoTeacherModal").on("show.bs.modal", openModal); //lắng nghe mở modal
                 $("#infoTeacherModal").on("hidden.bs.modal", closeModal); //lắng nghe đóng modal
-
                 const documentClass = await gradeService.get(route.query['_id']);
                 data.class = documentClass.message.classRooms;
                 data.class = data.class.map((item) => {
@@ -125,9 +181,7 @@ export default {
                 });
                 data.class[0].active = true;
                 data.active = data.class[0]._id;
-                const document = await childrenService.get(data.active);
-                data.items = document.message;
-                console.log(document.message);
+                await refresh();
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -137,6 +191,13 @@ export default {
                     console.log("Errors:", error.message);
                 }
             }
+            watch(()=>data.active,async(newValue,oldValue)=>{
+                try {
+                await refresh()
+                } catch (error) {
+                    
+                }
+            })
         })
         return {
             data,
@@ -160,10 +221,24 @@ export default {
             :class="value.active == true ? 'btn-success' : ''" @click="handleActive(value._id)">Lớp {{ value.name
             }}</button>
 
-        <Table :data="data.items" :name="'Class'" :fields="['Họ tên', 'Giới tính', 'Ngày sinh']"
+        <Table 
+        :data="data.setPage" :name="'Class'" :fields="['Họ tên', 'Giới tính', 'Ngày sinh']"
             :titles="['name', 'gender', 'birthday']" :action="true" :actionList="['info', 'edit', 'delete']" :checked="true"
             @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
         </Table>
+         <!-- pagination -->
+         <paginationVue class="m-0 p-0 mt-1" :currentPage="data.currentPage" :totalPage="data.totalPage"
+                :size="data.sizePage" :length="data.length" @page="(value) => (data.currentPage = value)" @previous="() => {
+                    if (data.currentPage > 1) {
+                        data.currentPage = data.currentPage - 1;
+                    }
+                }
+                    " @next="() => {
+        if (data.currentPage < data.totalPage) {
+            data.currentPage = data.currentPage + 1;
+        }
+    }
+        "></paginationVue>
     </div>
 </template>
 
