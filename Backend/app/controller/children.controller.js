@@ -1,13 +1,14 @@
-const { children } = require("../models/index");
+const { children, grade } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
-    const { name, birthday, gender,oldBMI, newBMI,  classRoomId, userId,relationship } = req.body;
+    const { name, birthday, gender,oldBMI, newBMI, gradeId, classRoomId, userId,relationship } = req.body;
     console.log("children Body:", req.body);
     try {
         const document = await children.create({
             name: name,
             birthday: birthday,
             gender: gender, 
+            gradeId:gradeId,
             classRoomId: classRoomId, 
             userId: userId,
             oldBMI:'',
@@ -26,6 +27,20 @@ exports.findAll = async (req, res, next) => {
     try {
         const documents = await children.findAll({});
         return res.json({ message: documents, status: "success" });
+    } catch (error) {
+        console.log(error);
+        return next(new ApiError(500, 'An error occurred while finding all the role'))
+    }
+};
+exports.findAllClass = async (req, res, next) => {
+    try {
+        console.log(req.params.id);
+        const document = await children.findAll({
+            where: {
+                classRoomId: req.params.id,
+            },
+        });
+        return res.json({ message: document, status: "success" });
     } catch (error) {
         console.log(error);
         return next(new ApiError(500, 'An error occurred while finding all the role'))

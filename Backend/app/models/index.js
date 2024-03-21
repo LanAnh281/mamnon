@@ -273,7 +273,11 @@ const children = sequelize.define("children", {
   },
   relationship:{
     type: DataTypes.STRING
-  }
+  },
+    gradeId:{
+      type: DataTypes.STRING
+    }
+  
 })
 const receipt = sequelize.define("receipt", {
   _id: setPrimary,

@@ -9,4 +9,6 @@ router.route("/:id")
     .get(children.findOne)
     .put(children.updated)
     .delete(children.delete);
+    router.route("/find/:id")
+    .get(children.findAllClass)
 module.exports = router;

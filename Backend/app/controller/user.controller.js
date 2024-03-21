@@ -119,12 +119,18 @@ exports.findOne = async (req, res, next) => {
             include: [{
                 model: certification,
 
-            }, {
+            },
+             {
                 model: Accounts,
                 include: {
                     model: Permissions
                 }
-            }]
+            },{
+           
+                model: children,
+
+            },
+        ]
             // include: {
 
             // }
