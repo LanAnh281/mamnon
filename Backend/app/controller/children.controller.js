@@ -1,4 +1,4 @@
-const { children, grade } = require("../models/index");
+const { children, grade, classRoom, Users } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
     const { name, birthday, gender,oldBMI, newBMI, gradeId, classRoomId, userId,relationship } = req.body;
@@ -35,15 +35,23 @@ exports.findAll = async (req, res, next) => {
 exports.findAllClass = async (req, res, next) => {
     try {
         console.log(req.params.id);
-        const document = await children.findAll({
+        let document = await children.findAll({
             where: {
-                classRoomId: req.params.id,
+              classRoomId: req.params.id,
             },
-        });
+            include: [
+              {
+                model: classRoom,
+                include: {
+                  model: Users
+                }
+              }
+            ]
+          });
         return res.json({ message: document, status: "success" });
     } catch (error) {
         console.log(error);
-        return next(new ApiError(500, 'An error occurred while finding all the role'))
+        return next(new ApiError(500, 'An error occurred while finding all the children in a class'))
     }
 };
 exports.findOne = async (req, res, next) => {
@@ -61,12 +69,21 @@ exports.findOne = async (req, res, next) => {
     }
 };
 exports.updated = async (req, res, next) => {
-    const { name } = req.body;
+    const { name, birthday, gender,oldBMI, newBMI, gradeId, classRoomId, userId,relationship } = req.body;
     console.log("Update children", req.body);
     try {
         const document = await children.update(
             {
                 name: name,
+                birthday: birthday,
+                gender: gender, 
+                gradeId:gradeId,
+                classRoomId: classRoomId, 
+                userId: userId,
+                oldBMI:oldBMI,
+                newBMI:newBMI,
+                relationship:relationship,
+                active:true,
             },
             {
                 where: {

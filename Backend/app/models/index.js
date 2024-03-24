@@ -473,12 +473,12 @@ receipt.belongsTo(Bill, {
 })
 Users.hasMany(classRoom,{
   foreignKey:"teacherId",
-  onDelete: "CASCADE",
+  onDelete: "SET NULL",
   onUpdate: "CASCADE",
 })
 classRoom.belongsTo(Users,{
   foreignKey:"teacherId",
-  onDelete: "CASCADE",
+  onDelete: "SET NULL",
   onUpdate: "CASCADE",
 })
 // Sync the model with the database

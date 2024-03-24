@@ -23,6 +23,7 @@ router.route("/parent/children")
     .post( user.createParent);
 router.route("/parent/children/:id")
     .get(user.findParent)
+    .put(user.updatedParent);
 
        
 module.exports = router;

@@ -277,6 +277,41 @@ exports.updated = async (req, res, next) => {
         return next(new ApiError(500, 'An error occurred while updating the user'))
     }
 };
+
+exports.updatedParent = async (req, res, next) => {
+    const { name, birthday, gender, identification, address, email, phone, positionName, nameCertification, selectedPermission } = req.body;
+    try {
+        const document = await Users.update(
+            {
+                name: name,
+                birthday: birthday,
+                gender: gender,
+                identification: identification,
+                address: address,
+                email: email,
+                phone: phone,
+                positionName: positionName
+            },
+            {
+                where: {
+                    _id: req.params.id,
+                },
+            }
+        );
+      
+       
+
+        return res.json({ message: document, status: "success" });
+    } catch (error) {
+        console.log(error);
+        return next(new ApiError(500, 'An error occurred while updating parent the user'))
+    }
+};
+
+
+
+
+
 exports.delete = async (req, res, next) => {
     try {
         const documentUser = await Users.findOne({
