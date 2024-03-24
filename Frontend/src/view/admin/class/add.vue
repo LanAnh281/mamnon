@@ -14,7 +14,7 @@ export default {
                 name: "",
                 description: ""
             },
-            error: { name: "", description: "" },
+            error: { name: "", description: "",price:"" },
             flag: true,
         });
         const isModalOpen = ref(false);
@@ -30,8 +30,10 @@ export default {
         const refresh = () => {
             data.item = {
                 name: "",
+                description:"",
+                price:"",
             };
-            data.error = { name: "" };
+            data.error = { name: "",description:"",price:"" };
             data.flag = true;
         };
 
@@ -63,7 +65,6 @@ export default {
             save,
             checkString,
             checkAddress,
-
         };
     },
 };
@@ -91,6 +92,16 @@ export default {
                                 <input type="text" class="form-control" id="inputrole" v-model="data.item.name" />
                                 <div v-if="data.error.name" class="invalid-error">
                                     {{ data.error.name }}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- giá -->
+                        <div class="form-group row">
+                            <label for="inputrole" class="col-sm-3 col-form-label p-0">Học phí:</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="inputrole" v-model="data.item.price" />
+                                <div v-if="data.error.price" class="invalid-error">
+                                    {{ data.error.price }}
                                 </div>
                             </div>
                         </div>

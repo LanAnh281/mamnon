@@ -14,6 +14,7 @@ import paginationVue from "../../../components/pagination/pagination.vue";
 
 //js
 import { success } from "../../../assets/js/alert.common";
+import {formatCurrency} from "../../../assets/js/format.common"
 export default {
     components: { Add, Info, Edit, paginationVue, Table },
     setup() {
@@ -149,12 +150,16 @@ export default {
             try {
                 const document = await gradeService.getAll();
                 data.items = document.message.map((item) => {
+
+                    const price=item.Fees &&  item.Fees.sort((a,b)=>new Date(b.updatedAt) - new Date(a.updatedAt));
+                    // console.log(price);
                     return {
                         ...item,
-                        classNumber: item.classRooms.length
+                        classNumber: item.classRooms.length,
+                        money: price[0] ?  formatCurrency(price[0].money) : formatCurrency(0)
                     }
                 });
-
+                // console.log(data.items);
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -203,8 +208,8 @@ export default {
                 data-target="#addGradeModal">+</button>
         </div>
         <div>
-            <Table :data="data.setPage" :name="'Children'" :fields="['Tên loại lớp', 'Mô tả', 'Số lớp']"
-                :titles="['name', 'description', 'classNumber']" :action="true" :actionList="['info', 'edit', 'delete']"
+            <Table :data="data.setPage" :name="'Children'" :fields="['Tên loại lớp','Học phí', 'Mô tả', 'Số lớp']"
+                :titles="['name','money' ,'description', 'classNumber']" :action="true" :actionList="['info', 'edit', 'delete']"
                 :checked="true" @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
             </Table>
             <Add v-if="activeAdd" @add="refresh()"></Add>
