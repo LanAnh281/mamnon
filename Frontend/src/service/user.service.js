@@ -39,6 +39,11 @@ class accountService {
             },
         })).data;
     }
+    async updateParent(id,data) {
+        return (
+            await this.api.put(`/parent/children/${id}`, data) ).data;
+       
+    }
     async delete(id) {
         return (await this.api.delete(`/${id}`)).data;
     }

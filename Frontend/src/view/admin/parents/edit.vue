@@ -13,6 +13,7 @@ import childrenService from "../../../service/children.service"
 //component
 import Select from "../../../components/select/dependent.select.vue";
 export default {
+    props:{_id:{type:String,default:""}},
     components: { Select },
     setup() {
         const router = useRouter();
@@ -35,15 +36,16 @@ export default {
         const save = async () => {
             try {
                 if(!data.flag){
-                // tạo tài khoản cho phụ huynh
-                const document= await userService.createParent(data.item);
-                console.log('Tài khoản:',document);
-                children.items[0].userId= document.message._id;
+                // cập nhật tài khoản cho phụ huynh
+                const document= await userService.updateParent(route.query['_id'],data.item);
+                console.log('Update thông tin phụ huynh:',document);
+                // children.items[0].userId= document.message._id;
                 // mã phụ huynh và mã lớp (nếu có) theo từng học sinh
                 console.log("Thông tin:",data.item,children.items);
+                // thay đổi lớp học 
                 for(let i=0;i<children.items.length;i++){
                     children.items[i].userId= document.message._id;
-                    const documentChildren= await childrenService.create(children.items[i]);
+                    const documentChildren= await childrenService.update(children.items[i]._id,children.items[i]);
                     console.log("DOC children:",documentChildren);
                     }
                 }
@@ -140,8 +142,12 @@ export default {
                 const birthdayCHildren = new Date(data.item.birthday);
                 // Hiển thị ngày sinh dữ liệu
                 data.children = birthdayCHildren .toISOString().substring(0, 10);
-                const documentClass= await gradeService.getAllClass(children.items);
-                children.items[index].class=documentClass.message;
+                for(let i=0;i<children.items.length;i++){
+                    const documentClass= await gradeService.getAllClass(children.items[i].gradeId);
+
+                    children.items[i].class=documentClass.message;
+                }
+                
                 console.log(children.items);
             } catch (error) {
                 if (error.response) {

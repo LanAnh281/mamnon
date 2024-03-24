@@ -11,15 +11,15 @@ import { formatDateTime } from "../../../assets/js/format.common"
 //component
 import Table from "../../../components/table/checked.table.vue";
 import paginationVue from "../../../components/pagination/pagination.vue";
-
+import Edit from "./edit.vue"
 export default {
-    components: { Table,paginationVue },
+    components: { Table,paginationVue,Edit },
     props: { _id: String },
     setup(props, {emit}) {
         const router = useRouter();
         const route = useRoute();
         const isModalOpen = ref(false);
-
+        const activeEdit=ref(false);
         const openModal = () => {
             isModalOpen.value = true;
             console.log("open modal info user");
@@ -33,7 +33,7 @@ export default {
             class: {
 
             },
-            items: [{ name: "", birthday: "", gender: "" }],
+            items: [{ name: "", birthday: "", gender: "",teacherName:"-" }],
             active: "",
             setPage: [],
             searchPage: [],
@@ -41,7 +41,8 @@ export default {
             totalPage: 1,
             sizePage: 1,
             length: 0,
-            searchText: ""
+            searchText: "",
+            activeData:""
         });
         data.totalPage = computed(() =>
             data.searchPage ? Math.ceil(data.searchPage.length / data.sizePage) : 0
@@ -94,9 +95,11 @@ export default {
                 }
             }
         }
-        const handleEdit = async () => {
+        const handleEdit = async (value) => {
             try {
-
+                console.log('edit BBI');
+                data.activeData = value;
+                activeEdit.value = !activeEdit.value;
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -154,9 +157,11 @@ export default {
                     return{
                         ...item,
                         birthday:formatDateTime(item.birthday),
-                        gender: item.gender ? 'Nữ' : 'Nam'
+                        gender: item.gender ? 'Nữ' : 'Nam',
+                        teacherName:  data.items[0] ? data.items[0].classRoom.User.name: '-'
                     }
                 })
+                // const teacherName= data.items[0] ? data.items[0].classRoom.User.name: '-';
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -201,6 +206,8 @@ export default {
         })
         return {
             data,
+            activeEdit,
+
             handleActive,
             handleAdd,
             handleEdit,
@@ -213,19 +220,24 @@ export default {
 
 <template>
     <div class="body">
-
         <h2 class="text-center mt-3">Danh sách trẻ</h2>
         <p class="mx-auto dash"></p>
         <button class="btn btn-success float-right mb-3 mr-3">+</button>
         <button class="btn  mx-2 my-3" v-for="(value, index) in data.class" :key="index"
-            :class="value.active == true ? 'btn-success' : ''" @click="handleActive(value._id)">Lớp {{ value.name
-            }}</button>
-
+            :class="value.active == true ? 'btn-success' : ''" @click="handleActive(value._id)">Lớp {{ value.name}}</button>
+            <h5 class="float-right pt-5">GVCN: {{data.items.length>0 ? data.items[0].teacherName : '-'}}</h5>
         <Table 
-        :data="data.setPage" :name="'Class'" :fields="['Họ tên', 'Giới tính', 'Ngày sinh']"
-            :titles="['name', 'gender', 'birthday']" :action="true" :actionList="['info', 'edit', 'delete']" :checked="true"
-            @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
+        :data="data.setPage" :name="'Children'" :fields="['Họ tên', 'Giới tính', 'Ngày sinh']"
+            :titles="['name', 'gender', 'birthday']" 
+            :action="true" 
+            :actionList="[ 'edit', 'delete']" 
+            :checked="true"
+            @edit="handleEdit" 
+            @delete="handeleDelete">
         </Table>
+        <Edit :_id="data.activeData" v-if="activeEdit" @edit="refresh()"></Edit>
+
+        <!--    @info="handleInfo"  -->
          <!-- pagination -->
          <paginationVue class="m-0 p-0 mt-1" :currentPage="data.currentPage" :totalPage="data.totalPage"
                 :size="data.sizePage" :length="data.length" @page="(value) => (data.currentPage = value)" @previous="() => {

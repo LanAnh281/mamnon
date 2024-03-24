@@ -71,7 +71,7 @@ export default {
                         teacher: item.User == null ? '-' : item.User.name 
                     }
                 })
-                console.log(data.items);
+                // console.log(data.items);
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);

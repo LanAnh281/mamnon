@@ -4,6 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 //service
 import schoolService from "../../../service/school.service";
 import userService from "../../../service/user.service";
+import classService from "../../../service/class.service";
 //component
 import Add from "./add.vue";
 import Info from "./info.vue";
@@ -84,10 +85,12 @@ export default {
 
             }
         }
-        const handeleDelete = async (value) => {
+        const handleDelete = async (value) => {
             try {
                 data.activeData = value;
+                // xóa giáo viên 
                 const document = await userService.delete(data.activeData);
+                // xóa giáo viên thì lớp GVCN sẽ được set null
                 await refresh();
             } catch (error) {
                 if (error.response) {
@@ -185,7 +188,7 @@ export default {
             activeAssignment,
             // method
             handleInfo,
-            handeleDelete,
+            handleDelete,
             handleEdit,
             handeleAssignment,
             add,
@@ -213,7 +216,7 @@ export default {
 
             <Table :data="data.setPage" :name="'Teacher'" :fields="['Họ và tên', 'SĐT', 'Email']"
                 :titles="['name', 'phone', 'email']" :action="true" :actionList="['info', 'edit', 'delete', 'assignment']"
-                :checked="true" @info="handleInfo" @edit="handleEdit" @delete="handeleDelete"
+                :checked="true" @info="handleInfo" @edit="handleEdit" @delete="handleDelete"
                 @assignment="handeleAssignment">
             </Table>
             <Info :_id="data.activeData" v-if="activeInfo" @closeModal="() => { activeInfo = !activeInfo }"></Info>

@@ -121,6 +121,7 @@ export default {
             try {
                 data.activeData = value;
                 activeEdit.value = !activeEdit.value;
+                console.log('edit');
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -202,7 +203,7 @@ export default {
                 data-target="#addGradeModal">+</button>
         </div>
         <div>
-            <Table :data="data.setPage" :name="'Grade'" :fields="['Tên loại lớp', 'Mô tả', 'Số lớp']"
+            <Table :data="data.setPage" :name="'Children'" :fields="['Tên loại lớp', 'Mô tả', 'Số lớp']"
                 :titles="['name', 'description', 'classNumber']" :action="true" :actionList="['info', 'edit', 'delete']"
                 :checked="true" @info="handleInfo" @edit="handleEdit" @delete="handeleDelete">
             </Table>

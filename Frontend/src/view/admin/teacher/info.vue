@@ -27,7 +27,7 @@ export default {
                 // format date 
                 data.item.birthday = formatDateTime(data.item.birthday);
                 data.item.gender = data.item.gender === true ? 'Nữ' : 'Nam';
-                console.log('d', props._id, data.item)
+                // console.log('d', props._id, data.item)
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
