@@ -1,14 +1,44 @@
-const { grade, classRoom } = require("../models/index");
-const ApiError = require("../api-error")
+const { grade, classRoom,course,Fee } = require("../models/index");
+const ApiError = require("../api-error");
 exports.create = async (req, res, next) => {
-    const { name, description } = req.body;
+    const { name, description,price } = req.body;
     console.log("grade Body:", req.body);
     try {
+        // thêm loại lớp mới
         const document = await grade.create({
             name: name,
             description: description
         });
-        console.log(document);
+        // thêm học phí cho loại lớp mới
+        //1.Thêm niên khóa mới nhất (nếu chưa có)
+        const now= new Date();
+        //lấy năm hiện tại
+        const currentYear= now.getFullYear();
+        const pastYear= currentYear -1;
+        console.log('Năm hiện tại:',currentYear,'Năm quá khứ:',pastYear);
+        const findCourse= await course.findAll({});
+        const filterCourse= findCourse.filter((item)=>item.name==`${pastYear}-${currentYear}`);
+        console.log('Đã tồn tại niên khóa:',filterCourse);
+        let newCourse='';
+        if(filterCourse.length==0){
+            // tạo niên khóa mới
+           newCourse= await course.create({
+                name:`${pastYear}-${currentYear}`,
+                start:`8/${pastYear}`,
+                end:`5/${currentYear}`
+            })
+            console.log('Đã tạo niên khóa mới:', newCourse);
+        }else{
+            newCourse= filterCourse[0]._id;
+        }
+        console.log('Mã niên khóa:',newCourse,document.dataValues._id);
+        // thêm học phí 
+        const createFee= await Fee.create({
+            gradeId:document.dataValues._id,
+            courseId:newCourse,
+            money:price
+        })
+        console.log('Tạo học phí:',createFee);
         return res.json({ message: document, status: "success" });
     } catch (error) {
         console.log(error);
@@ -18,9 +48,12 @@ exports.create = async (req, res, next) => {
 exports.findAll = async (req, res, next) => {
     try {
         const documents = await grade.findAll({
-            include: {
+            include: [{
                 model: classRoom
+            },{
+                model:Fee
             }
+        ]
         });
         return res.json({ message: documents, status: "success" });
     } catch (error) {

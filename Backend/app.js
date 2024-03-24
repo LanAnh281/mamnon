@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 const http = require("http");
-const server = http.createServer(app);
+
 //route
 const accountRouter = require("./app/route/account.route");
 const roleRouter = require("./app/route/role.route");
@@ -39,6 +39,13 @@ const loginRoute = require("./app/route/login.route");
 const childrenRoute = require("./app/route/children.route");
 const parentRoute = require("./app/route/parent.route");
 const paypalRoute = require("./app/route/paypal.route");
+const notificationRouter = require("./app/route/notification.route");
+
+//SOCKET
+//socket
+const socketController = require("./app/controller/socket.controller");
+const server = http.createServer(app);
+socketController.attach(server);
 // API
 app.use("/static", express.static(path.join(__dirname, "static")));
 server.listen(3000, () => {
@@ -82,6 +89,7 @@ app.use("/api/login", loginRoute);
 app.use("/api/children", childrenRoute);
 app.use("/api/parent", parentRoute);
 app.use("/api/paypal", paypalRoute);
+app.use("/api/notification", notificationRouter);
 // API
 // check errors
 app.use((req, res, next) => {
