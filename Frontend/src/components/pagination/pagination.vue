@@ -64,8 +64,8 @@ export default {
 }
 
 .isActive {
-    color: var(--ruby);
-    text-shadow: 0 0 2px blue;
+    color: blue;
+    text-shadow: 0 0 2px rgb(0, 153, 255);
     font-weight: 500;
 }
 
@@ -79,7 +79,7 @@ a {
 }
 
 a:hover {
-    color: var(--ruby);
+    color: blue;
     text-shadow: 0 0 2px #73d7f3;
 }
 </style>
