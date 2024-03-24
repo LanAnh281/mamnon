@@ -218,6 +218,9 @@ const BMI = sequelize.define("BMI", {
   },
   BMI: {
     type: DataTypes.FLOAT
+  },
+  teacherId:{
+    type:DataTypes.STRING
   }
 })
 const certification = sequelize.define("certification", {
@@ -465,6 +468,16 @@ Bill.hasMany(receipt, {
 })
 receipt.belongsTo(Bill, {
   foreignKey: "billId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+Users.hasMany(classRoom,{
+  foreignKey:"teacherId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+})
+classRoom.belongsTo(Users,{
+  foreignKey:"teacherId",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 })

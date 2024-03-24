@@ -1,4 +1,4 @@
-const { classRoom, grade } = require("../models/index");
+const { classRoom, grade, children, Users } = require("../models/index");
 const ApiError = require("../api-error")
 exports.create = async (req, res, next) => {
     const { name, gradeId, courseId } = req.body;
@@ -18,7 +18,13 @@ exports.create = async (req, res, next) => {
 };
 exports.findAll = async (req, res, next) => {
     try {
-        const documents = await classRoom.findAll({});
+        const documents = await classRoom.findAll({
+            include: [{
+                model: Users
+            }, {
+                model:children
+            }]
+        });
         return res.json({ message: documents, status: "success" });
     } catch (error) {
         console.log(error);
@@ -40,14 +46,15 @@ exports.findOne = async (req, res, next) => {
     }
 };
 exports.updated = async (req, res, next) => {
-    const { name, gradeId, courseId } = req.body;
+    const { name, gradeId, courseId,teacherId } = req.body;
     console.log("Update classRoom", req.body);
     try {
         const document = await classRoom.update(
             {
                 name: name,
                 gradeId: gradeId,
-                courseId: courseId
+                courseId: courseId,
+                teacherId:teacherId
             },
             {
                 where: {
