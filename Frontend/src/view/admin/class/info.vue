@@ -8,10 +8,11 @@ import gradeService from "../../../service/grade.service";
 import childrenService from "../../../service/children.service"
 //js
 import { formatDateTime } from "../../../assets/js/format.common"
+import {deleted} from "../../../assets/js/alert.common"
 //component
 import Table from "../../../components/table/checked.table.vue";
 import paginationVue from "../../../components/pagination/pagination.vue";
-import Edit from "./edit.vue"
+import Edit from "./MBI.vue"
 export default {
     components: { Table,paginationVue,Edit },
     props: { _id: String },
@@ -97,7 +98,7 @@ export default {
         }
         const handleEdit = async (value) => {
             try {
-                console.log('edit BBI');
+                console.log('edit BBI',value);
                 data.activeData = value;
                 activeEdit.value = !activeEdit.value;
             } catch (error) {
@@ -110,19 +111,7 @@ export default {
                 }
             }
         }
-        const handleInfo = async () => {
-            try {
-
-            } catch (error) {
-                if (error.response) {
-                    console.log("Server-side errors", error.response.data);
-                } else if (error.request) {
-                    console.log("Client-side errors", error.request);
-                } else {
-                    console.log("Errors:", error.message);
-                }
-            }
-        }
+       
         const handleAdd = async () => {
             try {
 
@@ -136,9 +125,18 @@ export default {
                 }
             }
         }
-        const handeleDelete = async () => {
+        const handeleDelete = async (value) => {
             try {
-
+                console.log('xóa');
+                const isDelete= await deleted('Xóa trẻ','Bạn có muốn xóa trẻ này');
+                console.log(isDelete);
+                if(isDelete){
+                    const document= await childrenService.delete(value);
+                console.log(document); 
+                }else{
+                    console.log('k x');
+                }
+               
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -161,6 +159,7 @@ export default {
                         teacherName:  data.items[0] ? data.items[0].classRoom.User.name: '-'
                     }
                 })
+                console.log(data.items)
                 // const teacherName= data.items[0] ? data.items[0].classRoom.User.name: '-';
             } catch (error) {
                 if (error.response) {
@@ -187,6 +186,7 @@ export default {
                 data.class[0].active = true;
                 data.active = data.class[0]._id;
                 await refresh();
+                
             } catch (error) {
                 if (error.response) {
                     console.log("Server-side errors", error.response.data);
@@ -211,7 +211,7 @@ export default {
             handleActive,
             handleAdd,
             handleEdit,
-            handleInfo,
+    
             handeleDelete,
         }
     }
@@ -237,7 +237,6 @@ export default {
         </Table>
         <Edit :_id="data.activeData" v-if="activeEdit" @edit="refresh()"></Edit>
 
-        <!--    @info="handleInfo"  -->
          <!-- pagination -->
          <paginationVue class="m-0 p-0 mt-1" :currentPage="data.currentPage" :totalPage="data.totalPage"
                 :size="data.sizePage" :length="data.length" @page="(value) => (data.currentPage = value)" @previous="() => {
