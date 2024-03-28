@@ -58,9 +58,15 @@ exports.findOne = async (req, res, next) => {
     try {
         console.log(req.params.id);
         const document = await children.findOne({
+            include:[
+                {
+                    model:classRoom
+                }
+            ],
             where: {
                 _id: req.params.id,
             },
+           
         });
         return res.json({ message: document, status: "success" });
     } catch (error) {
@@ -91,6 +97,8 @@ exports.updated = async (req, res, next) => {
                 },
             }
         );
+        
+        console.log(document);
         return res.json({ message: document, status: "success" });
     } catch (error) {
         console.log(error);

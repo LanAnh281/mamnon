@@ -266,10 +266,10 @@ const children = sequelize.define("children", {
     type: DataTypes.BOOLEAN
   },
   oldBMI: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
   },
-  newMBI: {
-    type: DataTypes.STRING
+  newBMI: {
+    type: DataTypes.TEXT,
   },
   active: {
     type: DataTypes.BOOLEAN
